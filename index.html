@@ -1,75 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kaifu | AI Engineer</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-            color: #333;
-        }
-        header {
-            background-color: #111;
-            color: white;
-            text-align: center;
-            padding: 60px 20px 30px;
-        }
-        h1 {
-            margin-bottom: 10px;
-        }
-        section {
-            max-width: 800px;
-            margin: auto;
-            padding: 40px 20px;
-        }
-        h2 {
-            margin-top: 40px;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #111;
-            color: white;
-        }
-        a {
-            color: #0077cc;
-            text-decoration: none;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaifu | AI Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
+      color: #222;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      text-align: center;
+      padding: 80px 20px 60px;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    header p {
+      font-size: 1.2rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+    section {
+      margin-bottom: 60px;
+    }
+    h2 {
+      font-size: 2rem;
+      border-left: 5px solid #2c5364;
+      padding-left: 10px;
+      margin-bottom: 20px;
+    }
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .project-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      transition: transform 0.3s;
+    }
+    .project-card:hover {
+      transform: translateY(-5px);
+    }
+    .project-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+    .project-card p {
+      font-size: 0.95rem;
+    }
+    footer {
+      background: #2c5364;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+    .contact-icons a {
+      margin: 0 10px;
+      color: white;
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    .contact-icons a:hover {
+      color: #ffdd57;
+    }
+  </style>
 </head>
 <body>
+  <header class="animate__animated animate__fadeInDown">
+    <h1>Hi, I'm Kaifu</h1>
+    <p>AI Engineer | Innovator | Creator</p>
+  </header>
 
-    <header>
-        <h1>Hi, I'm Kaifu</h1>
-        <p>AI Engineer | Innovator | Creator</p>
-    </header>
-
-    <section>
-        <h2>About Me</h2>
-        <p>
-            I specialize in Artificial Intelligence, focusing on building real-world solutions using machine learning, computer vision, and deep learning technologies.
-        </p>
-
-        <h2>Projects</h2>
-        <ul>
-            <li><strong>Vehicle Number Plate Detection:</strong> OpenCV & Haar Cascades</li>
-            <li><strong>Cricket Win Predictor:</strong> Real-time match analysis</li>
-            <li><strong>AI Shorts Creation:</strong> No-narration creative visuals</li>
-        </ul>
-
-        <h2>Contact</h2>
-        <p>Email: <a href="mailto:gmkaifkaifu@gmail.com">gmkaifkaifu@gmail.com</a></p>
-        <p>GitHub: <a href="https://github.com/GMKAIFU" target="_blank">GMKAIFU</a></p>
-        <p>YouTube: <a href="https://www.youtube.com/@gmkaif" target="_blank">@gmkaif</a></p>
+  <div class="container">
+    <section class="animate__animated animate__fadeInLeft">
+      <h2>About Me</h2>
+      <p>I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future.</p>
     </section>
 
-    <footer>
-        © 2025 Kaifu17. All rights reserved.
-    </footer>
+    <section class="animate__animated animate__fadeInRight">
+      <h2>Projects</h2>
+      <div class="projects">
+        <div class="project-card">
+          <h3>Vehicle Number Plate Detection</h3>
+          <p>Using OpenCV & Haar Cascades to detect and read number plates with high accuracy.</p>
+        </div>
+        <div class="project-card">
+          <h3>Cricket Win Predictor</h3>
+          <p>Real-time analysis tool that predicts win probability during T20 matches.</p>
+        </div>
+        <div class="project-card">
+          <h3>AI Shorts Generator</h3>
+          <p>Auto-creates engaging AI-powered videos with animals & emotions for YouTube Shorts.</p>
+        </div>
+      </div>
+    </section>
 
+    <section class="animate__animated animate__fadeInUp">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:gmkaifkaifu@gmail.com">gmkaifkaifu@gmail.com</a></p>
+      <div class="contact-icons">
+        <a href="https://github.com/GMKAIFU" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="https://www.youtube.com/@gmkaif" target="_blank"><i class="fab fa-youtube"></i></a>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    &copy; 2025 Kaifu | All Rights Reserved
+  </footer>
 </body>
 </html>
