@@ -1,321 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>My First Game - Sky Jumper</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
-  body, html {
-    margin: 0; padding: 0; background: #0d1b2a; color: #4a90e2;
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    user-select: none;
-  }
-  h1 {
-    margin: 30px 0 10px;
-    text-align: center;
-    text-shadow: 0 0 10px #357abd;
-  }
-  #gameContainer {
-    position: relative;
-    max-width: 90vw;
-    max-height: 50vh;
-    box-shadow: 0 0 30px #0f3460;
-    border-radius: 15px;
-  }
-  canvas {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 15px;
-    background: linear-gradient(180deg, #14233c 0%, #0d1b2a 100%);
-  }
-  #gameOverScreen {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    color: #f0f0f0;
-    text-align: center;
-    background: rgba(13, 27, 42, 0.9);
-    border: 2px solid #4a90e2;
-    border-radius: 20px;
-    padding: 30px 40px;
-    font-size: 24px;
-    display: none;
-    z-index: 10;
-    width: 90%;
-    max-width: 350px;
-  }
-  #restartBtn {
-    margin-top: 20px;
-    padding: 10px 30px;
-    font-size: 20px;
-    color: #0d1b2a;
-    background: #4a90e2;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  #restartBtn:hover {
-    background: #357abd;
-  }
-  @media (max-width: 600px) {
-    h1 {
-      font-size: 1.6rem;
-      margin: 20px 0 10px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaifu | AI Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-  }
-</style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #f5f7fa, #c3cfe2);
+      color: #222;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: white;
+      text-align: center;
+      padding: 80px 20px 60px;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    header p {
+      font-size: 1.2rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+    section {
+      margin-bottom: 60px;
+    }
+    h2 {
+      font-size: 2rem;
+      border-left: 5px solid #2c5364;
+      padding-left: 10px;
+      margin-bottom: 20px;
+    }
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .project-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      transition: transform 0.3s;
+    }
+    .project-card:hover {
+      transform: translateY(-5px);
+    }
+    .project-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+    .project-card p {
+      font-size: 0.95rem;
+    }
+    footer {
+      background: #2c5364;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+    .contact-icons a {
+      margin: 0 10px;
+      color: white;
+      font-size: 1.5rem;
+      transition: color 0.3s;
+    }
+    .contact-icons a:hover {
+      color: #ffdd57;
+    }
+
+    /* Game button styles */
+    .game-button {
+      display: inline-block;
+      background: #2c5364;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: background 0.3s;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .game-button:hover {
+      background: #1b2a3a;
+    }
+  </style>
 </head>
 <body>
+  <header class="animate__animated animate__fadeInDown">
+    <h1>Hi, I'm Kaifu</h1>
+    <p>AI Engineer | Innovator | Creator</p>
+  </header>
 
-<h1>My First Game - Sky Jumper</h1>
-<div id="gameContainer">
-  <canvas id="gameCanvas" width="800" height="400"></canvas>
-  <div id="gameOverScreen">
-    <div id="finalScore"></div>
-    <button id="restartBtn">Restart</button>
+  <div class="container">
+    <section class="animate__animated animate__fadeInLeft">
+      <h2>About Me</h2>
+      <p>I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future.</p>
+    </section>
+
+    <section class="animate__animated animate__fadeInRight">
+      <h2>Projects</h2>
+      <div class="projects">
+        <div class="project-card">
+          <h3>Vehicle Number Plate Detection</h3>
+          <p>Using OpenCV & Haar Cascades to detect and read number plates with high accuracy.</p>
+        </div>
+        <div class="project-card">
+          <h3>Cricket Win Predictor</h3>
+          <p>Real-time analysis tool that predicts win probability during T20 matches.</p>
+        </div>
+        <div class="project-card">
+          <h3>AI Shorts Generator</h3>
+          <p>Auto-creates engaging AI-powered videos with animals & emotions for YouTube Shorts.</p>
+        </div>
+      </div>
+
+      <!-- Game Button Added Here -->
+      <section class="animate__animated animate__fadeInUp" style="margin-top: 40px;">
+        <h2>My Game: Sky Jumper</h2>
+        <p>Click the button below to play my Sky Jumper game:</p>
+        <a href="/games/sky-jumper/index.html" target="_blank" class="game-button">Play Sky Jumper</a>
+      </section>
+    </section>
+
+    <section class="animate__animated animate__fadeInUp">
+      <h2>Contact</h2>
+      <p>Email: <a href="mailto:gmkaifkaifu@gmail.com">gmkaifkaifu@gmail.com</a></p>
+      <div class="contact-icons">
+        <a href="https://github.com/GMKAIFU" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="https://www.youtube.com/@gmkaif" target="_blank"><i class="fab fa-youtube"></i></a>
+      </div>
+    </section>
   </div>
-</div>
 
-<script>
-(() => {
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-
-  const GRAVITY = 0.7;
-  const JUMP_STRENGTH = 15;
-  const OBSTACLE_SPEED_START = 6;
-  const OBSTACLE_INTERVAL_START = 1500;
-
-  let player, obstacles, score, speed, gameOver, lastObstacleTime;
-  let OBSTACLE_INTERVAL = OBSTACLE_INTERVAL_START;
-
-  class Player {
-    constructor() {
-      this.width = 50;
-      this.height = 50;
-      this.x = 50;
-      this.y = canvas.height - this.height - 30;
-      this.dy = 0;
-      this.jumping = false;
-      this.color = '#4a90e2';
-      this.shadowColor = '#2c69a6';
-    }
-
-    update() {
-      if (this.jumping) {
-        this.dy += GRAVITY;
-        this.y += this.dy;
-        if (this.y >= canvas.height - this.height - 30) {
-          this.y = canvas.height - this.height - 30;
-          this.jumping = false;
-          this.dy = 0;
-        }
-      }
-    }
-
-    jump() {
-      if (!this.jumping) {
-        this.jumping = true;
-        this.dy = -JUMP_STRENGTH;
-      }
-    }
-
-    draw() {
-      let grad = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
-      grad.addColorStop(0, this.color);
-      grad.addColorStop(1, this.shadowColor);
-
-      ctx.fillStyle = grad;
-      ctx.shadowColor = '#0f3460';
-      ctx.shadowBlur = 15;
-      ctx.beginPath();
-      roundRect(ctx, this.x, this.y, this.width, this.height, 10);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-
-      // Eye
-      ctx.fillStyle = '#fff';
-      ctx.beginPath();
-      ctx.arc(this.x + 15, this.y + 20, 6, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#0d1b2a';
-      ctx.beginPath();
-      ctx.arc(this.x + 15, this.y + 20, 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  class Obstacle {
-    constructor(speed) {
-      this.width = 30 + Math.random() * 20;
-      this.height = 40 + Math.random() * 30;
-      this.x = canvas.width + this.width;
-      this.y = canvas.height - this.height - 30;
-      this.speed = speed;
-      this.color = '#e94560';
-      this.shadowColor = '#a43348';
-    }
-
-    update() {
-      this.x -= this.speed;
-    }
-
-    draw() {
-      let grad = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
-      grad.addColorStop(0, this.color);
-      grad.addColorStop(1, this.shadowColor);
-
-      ctx.fillStyle = grad;
-      ctx.shadowColor = '#a43348';
-      ctx.shadowBlur = 12;
-      ctx.beginPath();
-      roundRect(ctx, this.x, this.y, this.width, this.height, 8);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-  }
-
-  function roundRect(ctx, x, y, width, height, radius) {
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
-  }
-
-  function isColliding(rect1, rect2) {
-    return !(
-      rect1.x + rect1.width < rect2.x ||
-      rect1.x > rect2.x + rect2.width ||
-      rect1.y + rect1.height < rect2.y ||
-      rect1.y > rect2.y + rect2.height
-    );
-  }
-
-  function drawBackground() {
-    ctx.fillStyle = '#14233c';
-    ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
-
-    ctx.strokeStyle = '#0f3460';
-    ctx.lineWidth = 2;
-    for(let i = 0; i < canvas.width; i += 40) {
-      ctx.beginPath();
-      ctx.moveTo(i, canvas.height - 30);
-      ctx.lineTo(i + 20, canvas.height - 50);
-      ctx.stroke();
-    }
-  }
-
-  function drawScore(score) {
-    ctx.fillStyle = '#4a90e2';
-    ctx.font = 'bold 28px Poppins, sans-serif';
-    ctx.shadowColor = '#357abd';
-    ctx.shadowBlur = 5;
-    ctx.fillText(`Score: ${score}`, 20, 40);
-    ctx.shadowBlur = 0;
-  }
-
-  function init() {
-    player = new Player();
-    obstacles = [];
-    score = 0;
-    speed = OBSTACLE_SPEED_START;
-    gameOver = false;
-    lastObstacleTime = 0;
-    OBSTACLE_INTERVAL = OBSTACLE_INTERVAL_START;
-    document.getElementById('gameOverScreen').style.display = 'none';
-    lastTime = 0;
-  }
-
-  function showGameOver() {
-    gameOver = true;
-    const screen = document.getElementById('gameOverScreen');
-    document.getElementById('finalScore').textContent = `Game Over! Your Score: ${score}`;
-    screen.style.display = 'block';
-  }
-
-  let lastTime = 0;
-  function gameLoop(timestamp) {
-    if (!lastTime) lastTime = timestamp;
-    let delta = timestamp - lastTime;
-    lastTime = timestamp;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBackground();
-
-    player.update();
-    player.draw();
-
-    if (!gameOver && timestamp - lastObstacleTime > OBSTACLE_INTERVAL) {
-      obstacles.push(new Obstacle(speed));
-      lastObstacleTime = timestamp;
-
-      speed += 0.1;
-      if (OBSTACLE_INTERVAL > 600) {
-        OBSTACLE_INTERVAL -= 10;
-      }
-    }
-
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-      obstacles[i].speed = speed;
-      obstacles[i].update();
-      obstacles[i].draw();
-
-      if (obstacles[i].x + obstacles[i].width < 0) {
-        obstacles.splice(i, 1);
-        score++;
-      } else if (isColliding(player, obstacles[i])) {
-        showGameOver();
-      }
-    }
-
-    drawScore(score);
-
-    if (!gameOver) {
-      requestAnimationFrame(gameLoop);
-    }
-  }
-
-  function onJump() {
-    if (!gameOver) player.jump();
-  }
-
-  window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
-      e.preventDefault();
-      onJump();
-    }
-  });
-
-  window.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    onJump();
-  }, { passive: false });
-
-  document.getElementById('restartBtn').addEventListener('click', () => {
-    init();
-    requestAnimationFrame(gameLoop);
-  });
-
-  init();
-  requestAnimationFrame(gameLoop);
-})();
-</script>
-
+  <footer>
+    &copy; 2025 Kaifu | All Rights Reserved
+  </footer>
 </body>
 </html>
-
