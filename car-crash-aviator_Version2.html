@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Crash Game (Aviator Style)</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #222; color: #fff; }
+    #car-area { margin: 40px auto; width: 400px; height: 150px; background: #333; border-radius: 10px; position: relative; }
+    #car { width: 100px; height: 60px; background: #00ff99; border-radius: 20px; position: absolute; left: 0; top: 45px; transition: left 0.1s linear; display: flex; align-items: center; justify-content: center; }
+    #car-text { color: #222; font-size: 1.2em; font-weight: bold; width: 100%; text-align: center; user-select: none; }
+    #multiplier { font-size: 2em; margin: 20px; }
+    #crash { color: #ff2222; font-size: 2em; display: none; }
+    #cashout { color: #00ff99; font-size: 2em; display: none; }
+    button { font-size: 1.2em; padding: 10px 30px; margin: 10px; border-radius: 10px; border: none; background: #00c3ff; color: #fff; cursor: pointer; }
+    button:disabled { background: #444; color: #999; }
+  </style>
+</head>
+<body>
+  <h1>🚗 Car Crash Game (Aviator Style)</h1>
+  <div id="car-area">
+    <div id="car">
+      <span id="car-text">gm kaifu</span>
+    </div>
+  </div>
+  <div id="multiplier">Multiplier: 1.00x</div>
+  <div id="crash">💥 CRASHED! 💥</div>
+  <div id="cashout">You cashed out at <span id="cashout-multiplier"></span>x!</div>
+  <button id="start-btn">Start</button>
+  <button id="cashout-btn" disabled>Cash Out</button>
+  <script>
+    // Game variables
+    let running = false;
+    let crashed = false;
+    let multiplier = 1.0;
+    let crashPoint = 0;
+    let interval = null;
+    let car = document.getElementById('car');
+    let cashout = false;
+
+    function randomCrashPoint() {
+      // Simulate Aviator random crash, most games crash before 2x, sometimes go high (1.01 - 10+)
+      let rand = Math.random();
+      if(rand < 0.5) return (1 + Math.random() * 1.2).toFixed(2); // 1.00 - 2.20
+      if(rand < 0.8) return (2.2 + Math.random() * 2.8).toFixed(2); // 2.20 - 5.00
+      return (5 + Math.random() * 10).toFixed(2); // 5.00 - 15.00
+    }
+
+    function resetGame() {
+      running = false;
+      crashed = false;
+      multiplier = 1.0;
+      crashPoint = randomCrashPoint();
+      cashout = false;
+      document.getElementById('multiplier').textContent = 'Multiplier: 1.00x';
+      document.getElementById('crash').style.display = 'none';
+      document.getElementById('cashout').style.display = 'none';
+      document.getElementById('cashout-btn').disabled = true;
+      car.style.left = '0px';
+    }
+
+    function startGame() {
+      resetGame();
+      running = true;
+      document.getElementById('start-btn').disabled = true;
+      document.getElementById('cashout-btn').disabled = false;
+      let startTime = Date.now();
+      interval = setInterval(() => {
+        if(!running) return;
+        let elapsed = (Date.now() - startTime) / 1000;
+        // Multiplier increases faster as time goes on
+        multiplier = (1 + Math.pow(elapsed, 1.5) * 0.05).toFixed(2);
+        document.getElementById('multiplier').textContent = `Multiplier: ${multiplier}x`;
+        // Move car across the area
+        let maxLeft = 300;
+        let percent = Math.min(multiplier / crashPoint, 1);
+        car.style.left = (percent * maxLeft) + 'px';
+
+        if(multiplier >= crashPoint) {
+          crash();
+        }
+      }, 60);
+    }
+
+    function crash() {
+      if(!running || crashed) return;
+      crashed = true;
+      running = false;
+      clearInterval(interval);
+      document.getElementById('crash').style.display = 'block';
+      document.getElementById('start-btn').disabled = false;
+      document.getElementById('cashout-btn').disabled = true;
+    }
+
+    function cashOut() {
+      if(!running || crashed || cashout) return;
+      cashout = true;
+      running = false;
+      clearInterval(interval);
+      document.getElementById('cashout').style.display = 'block';
+      document.getElementById('cashout-multiplier').textContent = multiplier;
+      document.getElementById('start-btn').disabled = false;
+      document.getElementById('cashout-btn').disabled = true;
+    }
+
+    // Button handlers
+    document.getElementById('start-btn').onclick = startGame;
+    document.getElementById('cashout-btn').onclick = cashOut;
+
+    // On load
+    resetGame();
+  </script>
+</body>
+</html>
