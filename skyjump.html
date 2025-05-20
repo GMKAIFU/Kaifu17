@@ -2,43 +2,42 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Sky Jumper - Offline Game</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
-  body, html {
-    margin: 0; padding: 0; overflow: hidden; background: #0d1b2a;
-    font-family: 'Poppins', sans-serif;
-    user-select: none;
+  * {
+    box-sizing: border-box;
   }
-  #gameCanvas {
-    display: block;
-    margin: auto;
-    background: transparent;
-    box-shadow: 0 0 30px #0f3460;
-    border-radius: 15px;
-    position: relative;
-    z-index: 1;
+  body, html {
+    margin: 0;
+    padding: 0;
+    background: #0d1b2a;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    user-select: none;
+    height: 100vh;
   }
   #gameContainer {
+    width: 100%;
+    height: 100%;
     position: relative;
-    width: 800px;
-    margin: 40px auto 0 auto;
   }
   #gameTitle {
-    text-align: center;
-    font-size: 48px;
-    font-weight: 700;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(24px, 5vw, 48px);
     color: #ffffff;
-    text-shadow:
-      0 0 10px #ffffff,
-      0 0 20px #bbbbbb,
-      0 0 30px #999999,
-      0 0 40px #dddddd,
-      0 0 70px #bbbbbb;
-    user-select: none;
-    margin-bottom: 10px;
-    font-family: 'Poppins', sans-serif;
+    text-shadow: 0 0 10px #ffffff, 0 0 20px #bbbbbb, 0 0 30px #999999;
+    z-index: 5;
+    pointer-events: none;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
   #gameOverScreen {
     position: absolute;
@@ -50,14 +49,15 @@
     border: 2px solid #4a90e2;
     border-radius: 20px;
     padding: 30px 50px;
-    font-size: 28px;
+    font-size: 24px;
     display: none;
     z-index: 10;
-    width: 320px;
+    width: 80%;
+    max-width: 360px;
   }
   #restartBtn {
     margin-top: 20px;
-    padding: 10px 30px;
+    padding: 12px 30px;
     font-size: 20px;
     color: #0d1b2a;
     background: #4a90e2;
@@ -72,10 +72,9 @@
 </style>
 </head>
 <body>
-
 <div id="gameContainer">
   <div id="gameTitle">Sky Jumper</div>
-  <canvas id="gameCanvas" width="800" height="400"></canvas>
+  <canvas id="gameCanvas"></canvas>
   <div id="gameOverScreen">
     <div id="finalScore"></div>
     <button id="restartBtn">Restart</button>
@@ -86,25 +85,32 @@
 (() => {
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
+  let canvasWidth, canvasHeight;
 
-  // Constants
   const GRAVITY = 0.7;
   const JUMP_STRENGTH = 15;
+  const STAR_COUNT = 60;
+  let OBSTACLE_INTERVAL = 1500;
   let OBSTACLE_SPEED_START = 6;
-  let OBSTACLE_INTERVAL = 1500; // ms
-  const STAR_COUNT = 80;
 
-  // Game state
-  let player, obstacles, score, speed, gameOver, lastObstacleTime;
-  let stars = [];
+  let player, obstacles, stars, score, speed, gameOver, lastObstacleTime;
 
-  // Player class
+  function resizeCanvas() {
+    canvasWidth = window.innerWidth;
+    canvasHeight = window.innerHeight;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
   class Player {
     constructor() {
       this.width = 50;
       this.height = 50;
       this.x = 50;
-      this.y = canvas.height - this.height - 30; // ground offset
+      this.y = canvas.height - this.height - 30;
       this.dy = 0;
       this.jumping = false;
       this.color = '#4a90e2';
@@ -112,54 +118,41 @@
       this.glowAlpha = 0;
       this.glowDirection = 1;
     }
-
     update() {
       if (this.jumping) {
         this.dy += GRAVITY;
         this.y += this.dy;
-
         if (this.y >= canvas.height - this.height - 30) {
           this.y = canvas.height - this.height - 30;
-          this.jumping = false;
           this.dy = 0;
+          this.jumping = false;
         }
       }
-
-      // Animate glow (pulse)
       this.glowAlpha += 0.03 * this.glowDirection;
       if (this.glowAlpha > 0.7) this.glowDirection = -1;
       else if (this.glowAlpha < 0) this.glowDirection = 1;
     }
-
     jump() {
       if (!this.jumping) {
         this.jumping = true;
         this.dy = -JUMP_STRENGTH;
       }
     }
-
     draw() {
-      // Draw body with gradient and glow
       let grad = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
       grad.addColorStop(0, this.color);
       grad.addColorStop(1, this.shadowColor);
-
       ctx.shadowColor = `rgba(74, 144, 226, ${this.glowAlpha.toFixed(2)})`;
-      ctx.shadowBlur = 25;
-
+      ctx.shadowBlur = 20;
       ctx.fillStyle = grad;
       ctx.beginPath();
       roundRect(ctx, this.x, this.y, this.width, this.height, 10);
       ctx.fill();
-
       ctx.shadowBlur = 0;
-
-      // Eye (simple circle)
       ctx.fillStyle = '#fff';
       ctx.beginPath();
       ctx.arc(this.x + 15, this.y + 20, 6, 0, Math.PI * 2);
       ctx.fill();
-
       ctx.fillStyle = '#0d1b2a';
       ctx.beginPath();
       ctx.arc(this.x + 15, this.y + 20, 3, 0, Math.PI * 2);
@@ -167,7 +160,6 @@
     }
   }
 
-  // Obstacle class
   class Obstacle {
     constructor(speed) {
       this.width = 30 + Math.random() * 20;
@@ -180,34 +172,26 @@
       this.glowAlpha = 0;
       this.glowDirection = 1;
     }
-
     update() {
       this.x -= this.speed;
-
-      // Animate glow (pulse)
       this.glowAlpha += 0.04 * this.glowDirection;
       if (this.glowAlpha > 0.7) this.glowDirection = -1;
       else if (this.glowAlpha < 0) this.glowDirection = 1;
     }
-
     draw() {
       let grad = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
       grad.addColorStop(0, this.color);
       grad.addColorStop(1, this.shadowColor);
-
       ctx.shadowColor = `rgba(233, 69, 96, ${this.glowAlpha.toFixed(2)})`;
       ctx.shadowBlur = 15;
-
       ctx.fillStyle = grad;
       ctx.beginPath();
       roundRect(ctx, this.x, this.y, this.width, this.height, 8);
       ctx.fill();
-
       ctx.shadowBlur = 0;
     }
   }
 
-  // Star class for background
   class Star {
     constructor() {
       this.x = Math.random() * canvas.width;
@@ -216,19 +200,15 @@
       this.alpha = Math.random() * 0.7 + 0.3;
       this.twinkleSpeed = Math.random() * 0.02 + 0.01;
       this.alphaDirection = Math.random() > 0.5 ? 1 : -1;
-      this.speedX = 0.3 + Math.random() * 0.3; // horizontal speed for movement
+      this.speedX = 0.3 + Math.random() * 0.3;
     }
-
     update() {
       this.alpha += this.twinkleSpeed * this.alphaDirection;
       if (this.alpha >= 1) this.alphaDirection = -1;
       else if (this.alpha <= 0.3) this.alphaDirection = 1;
-
-      // Move stars horizontally
       this.x -= this.speedX;
       if (this.x < 0) this.x = canvas.width;
     }
-
     draw() {
       ctx.beginPath();
       ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha.toFixed(2)})`;
@@ -240,7 +220,6 @@
     }
   }
 
-  // Utility: rounded rectangle
   function roundRect(ctx, x, y, width, height, radius) {
     ctx.moveTo(x + radius, y);
     ctx.lineTo(x + width - radius, y);
@@ -253,35 +232,24 @@
     ctx.quadraticCurveTo(x, y, x + radius, y);
   }
 
-  // Collision detection (AABB)
-  function isColliding(rect1, rect2) {
+  function isColliding(a, b) {
     return !(
-      rect1.x + rect1.width < rect2.x ||
-      rect1.x > rect2.x + rect2.width ||
-      rect1.y + rect1.height < rect2.y ||
-      rect1.y > rect2.y + rect2.height
+      a.x + a.width < b.x ||
+      a.x > b.x + b.width ||
+      a.y + a.height < b.y ||
+      a.y > b.y + b.height
     );
   }
 
-  // Background: draw ground and stars
   function drawBackground() {
-    // Clear full background with gradient
-    let skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
     skyGrad.addColorStop(0, '#0d1b2a');
     skyGrad.addColorStop(1, '#14233c');
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw stars
-    for (let star of stars) {
-      star.draw();
-    }
-
-    // Ground
+    stars.forEach(star => star.draw());
     ctx.fillStyle = '#14233c';
     ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
-
-    // Ground pattern - some simple repeated lines for depth
     ctx.strokeStyle = '#0f3460';
     ctx.lineWidth = 2;
     for(let i = 0; i < canvas.width; i += 40) {
@@ -292,79 +260,55 @@
     }
   }
 
-  // Draw score
   function drawScore(score) {
     ctx.fillStyle = '#4a90e2';
-    ctx.font = 'bold 28px Poppins, sans-serif';
+    ctx.font = 'bold 24px Poppins';
     ctx.shadowColor = '#357abd';
     ctx.shadowBlur = 5;
     ctx.fillText(`Score: ${score}`, 20, 40);
     ctx.shadowBlur = 0;
   }
 
-  // Initialize / reset game
   function init() {
     player = new Player();
     obstacles = [];
+    stars = Array.from({length: STAR_COUNT}, () => new Star());
     score = 0;
     speed = OBSTACLE_SPEED_START;
     gameOver = false;
     lastObstacleTime = 0;
-    OBSTACLE_INTERVAL = 1500; // reset interval
+    OBSTACLE_INTERVAL = 1500;
     document.getElementById('gameOverScreen').style.display = 'none';
-
-    // Initialize stars
-    stars = [];
-    for (let i = 0; i < STAR_COUNT; i++) {
-      stars.push(new Star());
-    }
   }
 
-  // Game Over screen show
   function showGameOver() {
     gameOver = true;
-    const screen = document.getElementById('gameOverScreen');
     document.getElementById('finalScore').textContent = `Game Over! Your Score: ${score}`;
-    screen.style.display = 'block';
+    document.getElementById('gameOverScreen').style.display = 'block';
   }
 
-  // Game loop
   function gameLoop(timestamp) {
     if (gameOver) return;
-
     if (!lastObstacleTime) lastObstacleTime = timestamp;
-
-    // Update stars
-    stars.forEach(star => star.update());
-
-    // Clear and draw background
+    stars.forEach(s => s.update());
     drawBackground();
-
-    // Update player
     player.update();
     player.draw();
 
-    // Manage obstacles
     if (timestamp - lastObstacleTime > OBSTACLE_INTERVAL) {
       obstacles.push(new Obstacle(speed));
       lastObstacleTime = timestamp;
-      // Increase speed slightly for challenge
       speed += 0.05;
       if (OBSTACLE_INTERVAL > 700) OBSTACLE_INTERVAL -= 10;
     }
 
-    // Update and draw obstacles
     for (let i = obstacles.length - 1; i >= 0; i--) {
       obstacles[i].update();
       obstacles[i].draw();
-
-      // Remove obstacles off screen
       if (obstacles[i].x + obstacles[i].width < 0) {
         obstacles.splice(i, 1);
         score++;
       }
-
-      // Check collision
       if (isColliding(player, obstacles[i])) {
         showGameOver();
         return;
@@ -372,24 +316,26 @@
     }
 
     drawScore(score);
-
     requestAnimationFrame(gameLoop);
   }
 
-  // Restart game
   document.getElementById('restartBtn').addEventListener('click', () => {
     init();
     requestAnimationFrame(gameLoop);
   });
 
-  // Input handlers
   window.addEventListener('keydown', e => {
     if (e.code === 'Space' || e.code === 'ArrowUp') {
       e.preventDefault();
       if (!gameOver) player.jump();
     }
   });
+
   canvas.addEventListener('click', () => {
+    if (!gameOver) player.jump();
+  });
+
+  canvas.addEventListener('touchstart', () => {
     if (!gameOver) player.jump();
   });
 
@@ -397,6 +343,5 @@
   requestAnimationFrame(gameLoop);
 })();
 </script>
-
 </body>
 </html>
