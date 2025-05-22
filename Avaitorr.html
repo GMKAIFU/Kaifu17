@@ -9,6 +9,7 @@
             --primary-red: #D32F2F;
             --dark-red: #B71C1C;
             --accent-red: #FF5252;
+            --pink-accent: #800080; /* Pink for >= 10x multipliers */
             --bg-dark: #1A1A1A;
             --bg-medium: #2C2C2C;
             --text-light: #F5F5F5;
@@ -143,7 +144,7 @@
         }
 
 
-        #multiplier-display {
+       #multiplier-display {
             position: absolute;
             top: 20px;
             left: 50%;
@@ -189,7 +190,7 @@
             color: var(--text-light);
             border: 2px solid var(--dark-red);
         }
-        #cashout-message {
+        #cashout-message { /* This is for player's successful cashout */
             background-color: rgba(76, 175, 80, 0.9); /* Green Accent with alpha */
             color: var(--text-light);
             border: 2px solid #388E3C;
@@ -247,7 +248,7 @@
             border: 1px solid var(--text-dark);
             background-color: var(--bg-dark);
             color: var(--text-light);
-            width: 120px;
+            width: 100px; /* Adjusted width slightly based on your previous full code */
             font-size: 1em;
         }
         #custom-bet-input:focus {
@@ -278,6 +279,7 @@
             background-color: var(--green-accent);
             color: var(--text-light);
             font-size: 1.2em;
+            min-height: 45px; /* Added to prevent layout shift when text changes */
         }
         #cashout-btn:disabled {
             background-color: var(--text-dark);
@@ -288,7 +290,7 @@
         .history-area {
             margin-top: 10px;
             padding: 15px;
-            background-color: var(--bg-medium); /* Same as game wrapper for consistency or slightly different */
+            background-color: var(--bg-medium);
             border-radius: 10px;
         }
         .history-area h2 {
@@ -300,12 +302,12 @@
         #crash-history-list {
             list-style: none;
             padding: 0;
-            max-height: 150px; /* Scrollable history */
+            max-height: 150px; 
             overflow-y: auto;
-            display: flex; /* Horizontal list */
-            flex-direction: row-reverse; /* Newest on right, like some Aviator games */
+            display: flex; 
+            flex-direction: row-reverse; 
             gap: 8px;
-            padding-bottom: 5px; /* For scrollbar space */
+            padding-bottom: 5px; 
         }
         #crash-history-list::-webkit-scrollbar {
             height: 8px;
@@ -324,12 +326,12 @@
             padding: 8px 12px;
             border-radius: 5px;
             font-weight: bold;
-            min-width: 60px; /* Ensure items have some width */
+            min-width: 60px; 
             text-align: center;
             border: 1px solid var(--text-dark);
             transition: transform 0.3s ease;
         }
-        #crash-history-list li:first-child { /* Newest item pulse */
+        #crash-history-list li:first-child { 
              animation: newHistoryItem 0.5s ease-out;
         }
         @keyframes newHistoryItem {
@@ -337,12 +339,10 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        #crash-history-list li.good-crash { color: var(--green-accent); } /* Multiplier > 2x */
-        #crash-history-list li.bad-crash { color: var(--accent-red); }  /* Multiplier < 2x */
-      
-
-
-
+        /* History item colors - order matters */
+        #crash-history-list li.bad-crash { color: var(--accent-red); } 
+        #crash-history-list li.good-crash { color: var(--green-accent); } 
+        #crash-history-list li.pink-crash { color: var(--pink-accent); }  /* For >= 10x */
 
         footer {
             margin-top: 30px;
@@ -357,7 +357,8 @@
 
     <div class="game-wrapper">
         <div class="top-bar">
-            <div id="wallet-info">Wallet: ₹<span id="wallet-amount">500</span></div>
+            <!-- Wallet amount from your HTML, JS will use INITIAL_WALLET -->
+            <div id="wallet-info">Wallet: ₹<span id="wallet-amount">500</span></div> 
             <button id="reset-wallet-btn">Reset Wallet</button>
         </div>
 
@@ -403,7 +404,7 @@
 
     <script>
         const cometElement = document.getElementById('comet');
-        const multiplierDisplay = document.getElementById('multiplier-display');
+        const multiplierDisplayElement = document.getElementById('multiplier-display'); // Changed from multiplierDisplay
         const walletAmountElement = document.getElementById('wallet-amount');
         const placeBetBtn = document.getElementById('place-bet-btn');
         const cashoutBtn = document.getElementById('cashout-btn');
@@ -413,36 +414,32 @@
         const currentBetDisplayValue = document.querySelector('#current-bet-display span');
         
         const crashMessageElement = document.getElementById('crash-message');
-        const cashoutMessageElement = document.getElementById('cashout-message');
+        const cashoutMessageElement = document.getElementById('cashout-message'); // This is for player's cashout
         const crashAtValueElement = document.getElementById('crash-at-value');
         const cashoutAtValueElement = document.getElementById('cashout-at-value');
         const winAmountValueElement = document.getElementById('win-amount-value');
         const crashHistoryList = document.getElementById('crash-history-list');
 
         const MAX_HISTORY_ITEMS = 50;
-        const INITIAL_WALLET = 1000;
+        const INITIAL_WALLET = 1000; // From your JS
 
         let wallet = INITIAL_WALLET;
-        let currentBet = 0;
-        let selectedBetAmount = 0;
+        let currentBet = 0; // Bet active in the current game round
+        let selectedBetAmount = 0; // Bet amount chosen by player for NEXT round
 
         let isGameRunning = false;
-        let hasCrashed = false;
-        let hasCashedOut = false;
+        let hasCrashed = false; // Specific to the game round, not just player
+        let playerHasCashedOutThisTurn = false; // Specific to the player's action in this turn
         let currentMultiplier = 1.0;
         let targetCrashMultiplier = 0;
         let gameInterval = null;
 
-        let crashHistory = [];
+        let visualCrashHistory = []; // Renamed from crashHistory for clarity
 
-        // --- Sound Effects (simple placeholders) ---
-        // You can replace these with actual audio files for a better experience
         const playSound = (type) => {
-            // Example: const audio = new Audio(`sounds/${type}.mp3`); audio.play();
-            console.log(`Sound: ${type}`); // Placeholder
+            console.log(`Sound: ${type}`); 
         };
 
-        // --- Wallet and Bet Functions ---
         function updateWalletDisplay() {
             walletAmountElement.textContent = Math.floor(wallet);
         }
@@ -452,85 +449,95 @@
         }
         
         function selectBet(amount) {
+            if (isGameRunning) return; // Cannot change bet during an active game
+
             selectedBetAmount = parseInt(amount);
             if (isNaN(selectedBetAmount) || selectedBetAmount <=0) selectedBetAmount = 0;
 
             betOptionBtns.forEach(btn => {
                 btn.classList.remove('selected');
-                if (parseInt(btn.dataset.bet) === selectedBetAmount) {
+                // Only mark as selected if custom input isn't the source of truth, or if they match
+                if (parseInt(btn.dataset.bet) === selectedBetAmount && !customBetInput.value) {
                     btn.classList.add('selected');
                 }
             });
-             if (![10,50,100,200].includes(selectedBetAmount) && selectedBetAmount > 0) {
-                customBetInput.value = selectedBetAmount; // Keep custom input sync if it was used
-            } else if ([10,50,100,200].includes(selectedBetAmount)) {
-                 customBetInput.value = ''; // Clear custom if preset is chosen
+
+            // If a preset button was clicked, clear custom input
+            if ([10,50,100,200,500,1000].includes(selectedBetAmount) && document.activeElement !== customBetInput) {
+                 customBetInput.value = ''; 
+            } else if (![10,50,100,200,500,1000].includes(selectedBetAmount) && selectedBetAmount > 0) {
+                 customBetInput.value = selectedBetAmount; // Sync custom input if value is not preset
             }
+
             updateCurrentBetDisplay();
             placeBetBtn.disabled = selectedBetAmount <= 0 || selectedBetAmount > wallet;
         }
 
         customBetInput.addEventListener('input', (e) => {
+            if (isGameRunning) { e.target.value = currentBet > 0 ? currentBet : ''; return; } // Prevent changes during game
+            betOptionBtns.forEach(btn => btn.classList.remove('selected')); // Deselect buttons when typing custom
             const value = parseInt(e.target.value);
             if (!isNaN(value) && value > 0) {
                 selectBet(value);
-            } else if (e.target.value === '') { // If cleared
-                selectBet(0); // Reset selected bet if input is cleared
+            } else if (e.target.value === '') { 
+                selectBet(0);
             }
         });
 
         betOptionBtns.forEach(btn => {
-            btn.addEventListener('click', () => selectBet(btn.dataset.bet));
+            btn.addEventListener('click', () => {
+                if (isGameRunning) return;
+                customBetInput.value = ''; // Clear custom input when preset is chosen
+                selectBet(btn.dataset.bet);
+            });
         });
 
         resetWalletBtn.addEventListener('click', () => {
-            if (isGameRunning) return; // Don't reset mid-game
+            if (isGameRunning) return; 
             wallet = INITIAL_WALLET;
             selectedBetAmount = 0;
+            currentBet = 0;
             customBetInput.value = '';
             betOptionBtns.forEach(b => b.classList.remove('selected'));
             updateWalletDisplay();
             updateCurrentBetDisplay();
-            placeBetBtn.disabled = true;
+            resetGameState(); // Also reset game visuals and button states
+            placeBetBtn.disabled = true; 
             console.log("Wallet reset to " + INITIAL_WALLET);
         });
 
-      // --- Game Logic Functions ---
-function generateCrashPoint() {
-    const r = Math.random();
-    if (r < 0.05) {
-        return 1.00; // 5% chance for instant crash
-    }
-    if (r < 0.35) {
-        return parseFloat((1.01 + Math.random() * 0.98).toFixed(2)); // 30% chance for 1.01x - 1.99x
-    }
-    if (r < 0.75) {
-        return parseFloat((2.00 + Math.random() * 0.99).toFixed(2)); // 40% chance for 2.00x - 2.99x
-    }
-    if (r < 0.90) {
-        return parseFloat((3.00 + Math.random() * 6.99).toFixed(2)); // 15% chance for 3.00x - 9.99x
-    }
-    if (r < 1.00 - 0.05) {
-        return parseFloat((10.00 + Math.random() * 9.99).toFixed(2)); // 10% chance for 10.00x - 19.99x
-    }
-    return parseFloat((20.00 + Math.random() * 80.00).toFixed(2)); // 5% chance for 20.00x - 100.00x
-}      
+        function generateCrashPoint() { // Your function
+            const r = Math.random();
+            if (r < 0.05) return 1.00; 
+            if (r < 0.35) return parseFloat((1.01 + Math.random() * 0.98).toFixed(2)); 
+            if (r < 0.75) return parseFloat((2.00 + Math.random() * 0.99).toFixed(2)); 
+            if (r < 0.90) return parseFloat((3.00 + Math.random() * 6.99).toFixed(2)); 
+            // Corrected for the last two ranges
+            if (r < 0.95) { // This covers 0.90 to 0.9499... (5% range)
+                return parseFloat((10.00 + Math.random() * 9.99).toFixed(2)); 
+            }
+            // This covers 0.95 to 0.999... (5% range)
+            return parseFloat((20.00 + Math.random() * 80.00).toFixed(2)); 
+        }      
 
- function resetGameState() {
+        function resetGameState() { // Resets visual and player state for a new game
             isGameRunning = false;
             hasCrashed = false;
-            hasCashedOut = false;
+            playerHasCashedOutThisTurn = false; // Renamed for clarity
             currentMultiplier = 1.00;
+
             cometElement.style.left = '10px';
             cometElement.style.transform = 'translateY(0) rotate(-15deg)';
             cometElement.classList.remove('flying', 'crashed-anim');
-            multiplierDisplay.textContent = '1.00x';
-            multiplierDisplay.classList.remove('critical');
+            multiplierDisplayElement.textContent = '1.00x';
+            multiplierDisplayElement.classList.remove('critical');
             crashMessageElement.style.display = 'none';
             cashoutMessageElement.style.display = 'none';
 
+            // Enable betting controls if not mid-game (which it isn't if resetGameState is called)
             placeBetBtn.disabled = selectedBetAmount <= 0 || selectedBetAmount > wallet;
             cashoutBtn.disabled = true;
+            cashoutBtn.textContent = 'Cash Out!'; // Reset button text
             betOptionBtns.forEach(btn => btn.disabled = false);
             customBetInput.disabled = false;
         }
@@ -545,123 +552,153 @@ function generateCrashPoint() {
                 return;
             }
 
-            currentBet = selectedBetAmount;
+            resetGameState(); // Ensure clean state before starting
+
+            currentBet = selectedBetAmount; // Set the active bet for this round
             wallet -= currentBet;
             updateWalletDisplay();
             playSound('bet_placed');
 
             isGameRunning = true;
-            hasCrashed = false;
-            hasCashedOut = false;
+            // hasCrashed and playerHasCashedOutThisTurn are already false from resetGameState
             targetCrashMultiplier = generateCrashPoint();
             
             console.log(`Game started. Bet: ${currentBet}. Crashing at: ${targetCrashMultiplier}x`);
 
             cometElement.classList.add('flying');
             placeBetBtn.disabled = true;
-            cashoutBtn.disabled = false;
+            cashoutBtn.disabled = false; // Enable cashout now that game is running with a bet
+            cashoutBtn.textContent = 'Cash Out!'; // Initial text, will update
             betOptionBtns.forEach(btn => btn.disabled = true);
             customBetInput.disabled = true;
 
             let startTime = Date.now();
             gameInterval = setInterval(() => {
-                if (!isGameRunning) {
+                if(!isGameRunning) { // Should not happen if interval is cleared properly
                     clearInterval(gameInterval);
                     return;
                 }
 
-                let elapsed = (Date.now() - startTime) / 1000; // time in seconds
-                // Smoother, more controlled multiplier increase
+                let elapsed = (Date.now() - startTime) / 1000; 
                 currentMultiplier = parseFloat((1 + elapsed * 0.1 + Math.pow(elapsed, 2) * 0.02).toFixed(2));
-
-
-                multiplierDisplay.textContent = `${currentMultiplier.toFixed(2)}x`;
+                multiplierDisplayElement.textContent = `${currentMultiplier.toFixed(2)}x`;
                 
-                // Comet visual progress based on multiplier relative to a typical "long flight" (e.g. 10x)
-                // This makes the comet move more consistently, not just rush at the end.
-                const visualProgressMaxMultiplier = 10; // Assume 10x is a good visual "end of screen"
+                // ** Live Cashout Button Update **
+                if (isGameRunning && !playerHasCashedOutThisTurn && currentBet > 0) {
+                    const potentialWinnings = Math.floor(currentBet * currentMultiplier);
+                    cashoutBtn.textContent = `Cash Out ₹${potentialWinnings}`;
+                }
+                
+                const visualProgressMaxMultiplier = 10; 
                 let progressPercent = Math.min(currentMultiplier / visualProgressMaxMultiplier, 1);
-                const maxLeft = cometElement.parentElement.offsetWidth - cometElement.offsetWidth - 20; // 20px padding
+                const maxLeft = cometElement.parentElement.offsetWidth - cometElement.offsetWidth - 20; 
                 cometElement.style.left = (10 + progressPercent * maxLeft) + 'px';
 
-
-                if (currentMultiplier > targetCrashMultiplier * 0.7) { // Warning visual
-                    multiplierDisplay.classList.add('critical');
+                // Warning visual when nearing crash, but not if already past it
+                if (currentMultiplier > targetCrashMultiplier * 0.7 && currentMultiplier < targetCrashMultiplier) { 
+                    multiplierDisplayElement.classList.add('critical');
+                } else {
+                    multiplierDisplayElement.classList.remove('critical');
                 }
 
-                if (currentMultiplier >= targetCrashMultiplier) {
-                    triggerCrash();
+                if(currentMultiplier >= targetCrashMultiplier) {
+                    triggerCrash(); // This will clear the interval
                 }
-            }, 50); // Update rate (50ms = 20fps for multiplier)
+            }, 50); 
         }
 
         function triggerCrash() {
-            if (!isGameRunning || hasCrashed || hasCashedOut) return;
+            if(!isGameRunning || hasCrashed) return; // Prevent multiple crash calls for same round
             
+            clearInterval(gameInterval); // Stop updates
+            isGameRunning = false; // Mark game as not running
+            hasCrashed = true; // Mark that this round has crashed
             playSound('crash');
-            clearInterval(gameInterval);
-            isGameRunning = false;
-            hasCrashed = true;
 
             cometElement.classList.add('crashed-anim');
-            multiplierDisplay.textContent = `${targetCrashMultiplier.toFixed(2)}x`; // Show final crash point
-            multiplierDisplay.classList.add('critical');
+            multiplierDisplayElement.textContent = `${targetCrashMultiplier.toFixed(2)}x`; 
+            multiplierDisplayElement.classList.add('critical'); // Keep it red for crash
 
             crashAtValueElement.textContent = targetCrashMultiplier.toFixed(2);
-            crashMessageElement.style.display = 'block';
+            crashMessageElement.style.display = 'block'; // Show the main crash message
             
-            addCrashToHistory(targetCrashMultiplier);
+            addCrashToHistory(targetCrashMultiplier); // Add to visual history
             
-            // Wait for animation then reset UI elements for next game
-            setTimeout(() => {
-                cashoutBtn.disabled = true;
-                placeBetBtn.disabled = selectedBetAmount <= 0 || selectedBetAmount > wallet; // Re-enable based on current state
-                betOptionBtns.forEach(btn => btn.disabled = false);
-                customBetInput.disabled = false;
-            }, 1000); // Allow crash animation to play
-            // Note: Bet was already deducted. Wallet doesn't change further on crash.
+            // UI reset for next bet opportunity
+            cashoutBtn.disabled = true; // Cashout no longer possible
+            cashoutBtn.textContent = 'Cash Out!'; // Reset text
+            // placeBetBtn and betting options will be re-enabled after a delay
+            
             console.log(`Crashed at ${targetCrashMultiplier.toFixed(2)}x. Bet lost: ${currentBet}`);
+            // Bet already deducted. If player didn't cash out, this is a loss.
+
+            // Delay re-enabling controls to allow user to see outcome
+            setTimeout(() => {
+                if (!isGameRunning && hasCrashed) { // Ensure it's still in a crashed state
+                    placeBetBtn.disabled = selectedBetAmount <= 0 || selectedBetAmount > wallet;
+                    betOptionBtns.forEach(btn => btn.disabled = false);
+                    customBetInput.disabled = false;
+                }
+            }, 1500); // Slightly longer delay to see message
         }
 
         function triggerCashOut() {
-            if (!isGameRunning || hasCrashed || hasCashedOut) return;
+            if(!isGameRunning || playerHasCashedOutThisTurn || hasCrashed) return; 
 
+            // Interval is NOT cleared here by player action if game is multi-stage
+            // BUT, for this single-player focused version, cashing out ENDS player's game.
+            clearInterval(gameInterval); 
+            isGameRunning = false; // Player's participation in this round ends
+            playerHasCashedOutThisTurn = true;
             playSound('cashout_success');
-            clearInterval(gameInterval);
-            isGameRunning = false;
-            hasCashedOut = true;
 
-            const winnings = Math.floor(currentBet * currentMultiplier);
+            const winnings = Math.floor(currentBet * currentMultiplier); // Use currentMultiplier at cashout time
             wallet += winnings;
             updateWalletDisplay();
 
             cashoutAtValueElement.textContent = currentMultiplier.toFixed(2);
             winAmountValueElement.textContent = winnings;
-            cashoutMessageElement.style.display = 'block';
+            cashoutMessageElement.style.display = 'block'; // Show player's cashout message
             
             console.log(`Cashed out at ${currentMultiplier.toFixed(2)}x. Won: ${winnings}`);
             
-            // UI reset for next game
             cashoutBtn.disabled = true;
-            placeBetBtn.disabled = selectedBetAmount <= 0 || selectedBetAmount > wallet;
-            betOptionBtns.forEach(btn => btn.disabled = false);
-            customBetInput.disabled = false;
+            cashoutBtn.textContent = 'Cashed Out!'; // Update button text
+            // For this game model, cashing out also stops the rocket for the player.
+            // So, we re-enable betting for the next round after a delay.
+            // The "actual" crash point of the round might be higher, but player is out.
+            // We can add targetCrashMultiplier to history even if player cashed out early.
+            addCrashToHistory(targetCrashMultiplier); // Still log the round's eventual crash point for history
+
+            setTimeout(() => {
+                if (!isGameRunning && playerHasCashedOutThisTurn) {
+                     placeBetBtn.disabled = selectedBetAmount <= 0 || selectedBetAmount > wallet;
+                     betOptionBtns.forEach(btn => btn.disabled = false);
+                     customBetInput.disabled = false;
+                }
+            }, 1500);
         }
 
         function addCrashToHistory(crashVal) {
-            crashHistory.unshift(crashVal); // Add to the beginning
-            if (crashHistory.length > MAX_HISTORY_ITEMS) {
-                crashHistory.pop(); // Remove the oldest
+            visualCrashHistory.unshift(crashVal); 
+            if (visualCrashHistory.length > MAX_HISTORY_ITEMS) {
+                visualCrashHistory.pop(); 
             }
             renderCrashHistory();
         }
 
         function renderCrashHistory() {
-            crashHistoryList.innerHTML = ''; // Clear previous list
-            crashHistory.forEach(val => {
+            crashHistoryList.innerHTML = ''; 
+            visualCrashHistory.forEach(val => {
                 const li = document.createElement('li');
                 li.textContent = `${val.toFixed(2)}x`;
-                if (val >= 2.0) {
+                
+                // Remove any existing color classes first to prevent conflicts
+                li.classList.remove('pink-crash', 'good-crash', 'bad-crash');
+
+                if (val >= 10.0) { // ** Pink for >= 10x **
+                    li.classList.add('pink-crash');
+                } else if (val >= 2.0) {
                     li.classList.add('good-crash');
                 } else {
                     li.classList.add('bad-crash');
@@ -670,22 +707,14 @@ function generateCrashPoint() {
             });
         }
 
-
-        // --- Event Listeners ---
-        placeBetBtn.addEventListener('click', () => {
-            resetGameState(); // Clear previous messages, reset comet visual
-            placeBetAndStart();
-        });
+        placeBetBtn.addEventListener('click', placeBetAndStart);
         cashoutBtn.addEventListener('click', triggerCashOut);
 
-
-        // --- Initialization ---
         document.getElementById('currentYear').textContent = new Date().getFullYear();
-        selectBet(0); // Initialize bet selection state
-        updateWalletDisplay();
-        renderCrashHistory(); // Render empty or loaded history if persisted
+        updateWalletDisplay(); // Initialize wallet display based on INITIAL_WALLET
+        renderCrashHistory(); 
         resetGameState(); // Set initial UI state correctly
-        placeBetBtn.disabled = true; // Initially disabled until a bet is chosen
+        selectBet(0); // Initialize bet selection, which will set placeBetBtn state
 
         console.log("Red Comet Aviator Initialized!");
     </script>
