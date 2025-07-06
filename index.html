@@ -29,15 +29,15 @@
     }
 
     body {
-      font-family: 'Inter', 'Poppins', sans-serif; /* Inter for a more modern feel, Poppins as fallback */
+      font-family: 'Inter', 'Poppins', sans-serif;
       background-color: var(--bg-dark);
       color: var(--text-primary);
       line-height: 1.7;
-      overflow-x: hidden; /* Prevent horizontal scrollbars from animations */
+      overflow-x: hidden;
     }
 
     .navbar {
-      background-color: rgba(13, 17, 23, 0.85); /* Slightly transparent dark */
+      background-color: rgba(13, 17, 23, 0.85);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       padding: 15px 5%;
@@ -69,7 +69,6 @@
       color: var(--accent-primary);
     }
 
-
     header {
       min-height: 100vh;
       display: flex;
@@ -77,11 +76,11 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 120px 20px 60px; /* Extra top padding for fixed navbar */
+      padding: 120px 20px 60px;
       background: radial-gradient(circle at top center, rgba(22, 27, 34, 0.8), var(--bg-dark) 70%),
                   linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
       background-blend-mode: overlay, normal;
-      background-size: 200% 200%; /* For potential animation */
+      background-size: 200% 200%;
       animation: gradientBG 15s ease infinite;
     }
     @keyframes gradientBG {
@@ -91,14 +90,13 @@
     }
 
     header h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem); /* Responsive font size */
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
       font-weight: 700;
       margin-bottom: 15px;
-      color: #fff; /* Make it pop more on the gradient */
-      /* For character animation */
+      color: #fff;
       overflow: hidden;
     }
-    header h1 .char { /* For GSAP text animation */
+    header h1 .char {
         display: inline-block;
         opacity: 0;
         transform: translateY(50px);
@@ -108,8 +106,8 @@
       font-size: clamp(1rem, 2.5vw, 1.5rem);
       color: var(--text-secondary);
       max-width: 600px;
-      opacity: 0; /* For GSAP */
-      transform: translateY(30px); /* For GSAP */
+      opacity: 0;
+      transform: translateY(30px);
     }
 
     .container {
@@ -120,8 +118,16 @@
 
     section {
       margin-bottom: 80px;
-      opacity: 0; /* For GSAP scroll trigger */
-      transform: translateY(50px); /* For GSAP scroll trigger */
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    
+    #llm-section {
+        background-color: var(--bg-medium);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 4px 15px var(--shadow-color);
     }
 
     h2 {
@@ -143,12 +149,11 @@
       border-radius: 2px;
       transform: scaleX(0);
       transform-origin: left;
-      transition: transform 0.5s ease-out; /* For GSAP ScrollTrigger to animate */
+      transition: transform 0.5s ease-out;
     }
-    section.is-visible h2::after { /* Used by Intersection Observer for simpler animation */
+    section.is-visible h2::after {
         transform: scaleX(1);
     }
-
 
     .about-content p {
         font-size: 1.1rem;
@@ -169,8 +174,8 @@
       padding: 25px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       box-shadow: 0 4px 15px var(--shadow-color);
-      opacity: 0; /* For GSAP stagger */
-      transform: translateY(30px); /* For GSAP stagger */
+      opacity: 0;
+      transform: translateY(30px);
     }
 
     .project-card:hover, .game-card:hover {
@@ -190,6 +195,26 @@
       font-size: 1rem;
       color: var(--text-secondary);
       margin-bottom: 15px;
+    }
+    
+    .infographic-button {
+      display: inline-block;
+      background: var(--accent-primary);
+      color: var(--bg-dark);
+      padding: 12px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .infographic-button:hover {
+      background: var(--accent-secondary);
+      transform: translateY(-3px);
     }
 
     .game-button {
@@ -227,7 +252,7 @@
     .contact-icons a {
       margin-right: 20px;
       color: var(--text-secondary);
-      font-size: 2rem; /* Larger icons */
+      font-size: 2rem;
       transition: color 0.3s ease, transform 0.3s ease;
     }
     .contact-icons a:hover {
@@ -244,31 +269,12 @@
       margin-top: 60px;
     }
 
-    /* Utility for GSAP animation (elements start hidden) */
-    .gsap-reveal {
-        opacity: 0;
-    }
-    .gsap-reveal-from-bottom {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    .gsap-reveal-from-left {
-        opacity: 0;
-        transform: translateX(-40px);
-    }
-    .gsap-reveal-from-right {
-        opacity: 0;
-        transform: translateX(40px);
-    }
-
-
-    /* Responsive adjustments */
     @media (max-width: 768px) {
         .navbar {
             padding: 15px 3%;
         }
         .navbar .nav-links {
-            display: none; /* Simple hide for demo, could be a burger menu */
+            display: none;
         }
         header h1 {
             font-size: 2.2rem;
@@ -277,13 +283,12 @@
             font-size: 1rem;
         }
         .projects {
-            grid-template-columns: 1fr; /* Stack project cards on smaller screens */
+            grid-template-columns: 1fr;
         }
         h2 {
             font-size: 1.6rem;
         }
     }
-
   </style>
 </head>
 <body>
@@ -310,31 +315,24 @@
         <p>I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future. My journey in AI is driven by a curiosity to explore the unknown and a desire to make a tangible impact.</p>
       </div>
     </section>
-    <!-- LLM Infographic Section -->
-<section id="llm-infographic" style="margin-top: 40px; padding: 20px; background-color: #f2f2f2; border-radius: 8px;">
-  <h2 style="color: #2c3e50;">LLM Research Infographics</h2>
 
-  <!-- Infographic Button -->
-  <button onclick="window.open('LLMinfograph.html', '_blank')" style="background-color: #3498db; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;">
-    Open Infographic
-  </button>
-
-  <!-- Optional Audio Placeholder -->
-  <div style="margin-top: 20px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #1abc9c;">
-    <strong>Audio Explanation:</strong> <br>
-    <!-- Replace the link below with your actual audio file -->
-    <audio controls>
-      <source src="your-audio-link.mp3" type="audio/mpeg">
-      Your browser does not support the audio element.
-    </audio>
-  </div>
-</section>
+    <section id="llm-section" class="content-section">
+        <h2>LLM Research Infographics</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 25px;">A visual guide to understanding the fundamentals of Large Language Models, their architecture, and applications.</p>
+        <button onclick="window.open('LLMinfograph.html', '_blank')" class="infographic-button">
+            Open Infographic
+        </button>
+        <div style="margin-top: 25px; padding: 20px; background-color: var(--bg-light); border-left: 4px solid var(--accent-secondary); border-radius: 4px;">
+            <strong style="color: var(--text-primary);">Audio Explanation:</strong><br>
+            <audio controls style="width: 100%; margin-top: 10px;">
+                <source src="your-audio-link.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </section>
 
     <section id="projects" class="content-section">
       <h2>My AI Projects & Research</h2>
-  
-          
-        </div>
       <div class="projects">
         <div class="project-card">
           <h3>Vehicle Number Plate Detection</h3>
@@ -354,29 +352,10 @@
         </div>
       </div>
     </section>
-    <!-- LLM Infographic Section -->
-<section id="llm-infographic" style="margin-top: 40px; padding: 20px; background-color: #f2f2f2; border-radius: 8px;">
-  <h2 style="color: #2c3e50;">LLM Research Infographics</h2>
-
-  <!-- Infographic Button -->
-  <button onclick="window.open('LLMinfograph.html', '_blank')" style="background-color: #3498db; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;">
-    Open Infographic
-  </button>
-
-  <!-- Optional Audio Placeholder -->
-  <div style="margin-top: 20px; padding: 15px; background-color: #e8f8f5; border-left: 4px solid #1abc9c;">
-    <strong>Audio Explanation:</strong> <br>
-    <!-- Replace the link below with your actual audio file -->
-    <audio controls>
-      <source src="your-audio-link.mp3" type="audio/mpeg">
-      Your browser does not support the audio element.
-    </audio>
-  </div>
-</section>
 
     <section id="games" class="content-section">
         <h2>My Games</h2>
-        <div class="projects"> <!-- Reusing .projects grid for game cards -->
+        <div class="projects">
             <div class="game-card">
                 <h3>Sky Jumper</h3>
                 <p>Navigate treacherous platforms and soar to new heights in this addictive jumping adventure. How high can you go?</p>
@@ -402,40 +381,34 @@
         <div class="contact-icons">
           <a href="https://github.com/GMKAIFU" target="_blank" aria-label="GitHub Profile"><i class="fab fa-github"></i></a>
           <a href="https://www.youtube.com/@gmkaif" target="_blank" aria-label="YouTube Channel"><i class="fab fa-youtube"></i></a>
-          <!-- Add LinkedIn if you have one -->
-          <!-- <a href="#" target="_blank" aria-label="LinkedIn Profile"><i class="fab fa-linkedin"></i></a> -->
         </div>
       </div>
     </section>
   </div>
 
   <footer>
-    © <span id="currentYear"></span> Kaifu | Innovating with AI
+    &copy; <span id="currentYear"></span> Kaifu | Innovating with AI
   </footer>
 
-  <!-- GSAP Core and ScrollTrigger Plugin -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      gsap.registerPlugin(ScrollTrigger, TextPlugin);
+      gsap.registerPlugin(ScrollTrigger, TextPlugin, ScrollToPlugin);
 
-      // Update footer year
       document.getElementById('currentYear').textContent = new Date().getFullYear();
 
-      // --- Header Animations ---
       const mainHeading = document.querySelector('header h1');
       const originalText = mainHeading.textContent;
-      mainHeading.textContent = ''; // Clear original text
+      mainHeading.textContent = ''; 
 
-      // Split text into characters for animation
       originalText.split('').forEach(char => {
           const span = document.createElement('span');
           span.className = 'char';
-          span.textContent = char === ' ' ? '\u00A0' : char; // Non-breaking space for spaces
+          span.textContent = char === ' ' ? '\u00A0' : char;
           mainHeading.appendChild(span);
       });
       
@@ -453,11 +426,9 @@
         y: 0,
         duration: 1,
         ease: "power2.out",
-        delay: 1.2 // After heading animation
+        delay: 1.2
       });
 
-
-      // --- ScrollTrigger for Sections and Elements ---
       gsap.utils.toArray('section.content-section').forEach(section => {
         gsap.fromTo(section,
           { opacity: 0, y: 70 },
@@ -468,29 +439,25 @@
             ease: 'power3.out',
             scrollTrigger: {
               trigger: section,
-              start: 'top 80%', // Start animation when 80% of section top is in view
+              start: 'top 80%',
               toggleActions: 'play none none none',
-              // markers: true, // For debugging
             }
           }
         );
 
-        // Animate h2::after pseudo-element
         const h2 = section.querySelector('h2');
         if (h2) {
-            gsap.to(h2, { // Target h2 itself to trigger the CSS transition on ::after
+            gsap.to(h2, {
                 scrollTrigger: {
                     trigger: h2,
                     start: "top 85%",
-                    toggleClass: {targets: section, className: "is-visible"}, // Add class to section
-                    once: true, // Animate only once
-                    // markers: true,
+                    toggleClass: {targets: section, className: "is-visible"},
+                    once: true,
                 }
             });
         }
       });
 
-      // Staggered animation for project cards and game cards
       gsap.utils.toArray('.project-card, .game-card').forEach(card => {
         gsap.fromTo(card,
           { opacity: 0, y: 50, scale: 0.95 },
@@ -509,7 +476,6 @@
         );
       });
       
-      // --- Smooth scrolling for nav links ---
       const navLinks = document.querySelectorAll('.nav-links a');
       navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -519,19 +485,17 @@
           if (targetElement) {
             gsap.to(window, {
               duration: 1,
-              scrollTo: { y: targetElement, offsetY: 70 } // Offset for fixed navbar
+              scrollTo: { y: targetElement, offsetY: 70 }
             });
           }
         });
       });
 
-      // --- Active nav link highlighting on scroll ---
       gsap.utils.toArray('section.content-section').forEach(section => {
         ScrollTrigger.create({
           trigger: section,
           start: "top center",
           end: "bottom center",
-          // markers: true,
           onToggle: self => {
             const link = document.querySelector(`.nav-links a[href="#${section.id}"]`);
             if (link) {
@@ -546,23 +510,20 @@
         });
       });
 
-      // Navbar shadow on scroll
       const navbar = document.querySelector('.navbar');
       ScrollTrigger.create({
           trigger: "body",
-          start: "top top-=100", // 100px from the top
+          start: "top top-=100",
           end: "bottom top",
           onUpdate: (self) => {
-              if (self.direction === 1 && self.progress > 0) { // Scrolling down
+              if (self.direction === 1 && self.progress > 0) {
                   gsap.to(navbar, { boxShadow: "0 2px 10px rgba(0,0,0,0.3)", duration: 0.3 });
-              } else if (self.direction === -1 && self.scroll() < 100) { // Scrolling up near top
+              } else if (self.direction === -1 && self.scroll() < 100) {
                   gsap.to(navbar, { boxShadow: "none", duration: 0.3 });
               }
           }
       });
-
-
     });
   </script>
 </body>
-</html>
+                  </html>
