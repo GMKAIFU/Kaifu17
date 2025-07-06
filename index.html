@@ -8,15 +8,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
+      /* Color palette is now controlled by JS, but we set initial defaults */
+      --bg-color-1: #0D1224;
+      --bg-color-2: #121A3A;
+      --bg-color-3: #221D4B;
+      
       --bg-dark: #0A0A10;
-      --bg-medium: rgba(22, 27, 44, 0.5); /* For Glassmorphism */
+      --glass-bg: rgba(15, 17, 26, 0.4);
       --text-primary: #EAEBF0;
       --text-secondary: #A0AEC0;
-      --accent-primary: #00BFFF; /* DeepSkyBlue */
-      --accent-secondary: #9370DB; /* MediumPurple */
+      --accent-primary: #33A0FF; /* Brighter Blue */
+      --accent-secondary: #B066FF; /* Brighter Purple */
       --border-color: rgba(255, 255, 255, 0.1);
       --shadow-color: rgba(0, 0, 0, 0.5);
-      --glow-color: rgba(0, 191, 255, 0.5);
+      --glow-color: rgba(51, 160, 255, 0.5);
     }
 
     * {
@@ -25,45 +30,25 @@
       box-sizing: border-box;
     }
 
-    /* Custom Cursor */
-    .cursor-dot, .cursor-dot-outline {
-        pointer-events: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        border-radius: 50%;
-        opacity: 0;
-        transform: translate(-50%, -50%);
-        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-        z-index: 9999;
-    }
-    .cursor-dot {
-        width: 8px;
-        height: 8px;
-        background-color: var(--accent-primary);
-    }
-    .cursor-dot-outline {
-        width: 40px;
-        height: 40px;
-        background-color: rgba(0, 191, 255, 0.2);
-    }
-    body:hover .cursor-dot, body:hover .cursor-dot-outline {
-        opacity: 1;
-    }
-
     body {
       font-family: 'Inter', 'DM Sans', sans-serif;
-      background-color: var(--bg-dark);
       color: var(--text-primary);
       line-height: 1.7;
       overflow-x: hidden;
-      cursor: none; /* Hide default cursor */
+      /* The magic background */
+      background: linear-gradient(135deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3));
+      transition: background 1s ease-out;
+    }
+    
+    .content-wrapper {
+        position: relative;
+        z-index: 2;
     }
 
     .navbar {
-      background-color: rgba(10, 10, 16, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background-color: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
       padding: 15px 5%;
       position: fixed;
       top: 0;
@@ -94,38 +79,11 @@
       margin-left: 30px;
       font-weight: 500;
       transition: color 0.3s ease;
-      position: relative;
     }
     .navbar .nav-links a:hover, .navbar .nav-links a.active {
       color: var(--accent-primary);
     }
-    .navbar .nav-links a::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        transform: scaleX(0);
-        height: 2px;
-        bottom: -4px;
-        left: 0;
-        background-color: var(--accent-primary);
-        transform-origin: bottom right;
-        transition: transform 0.25s ease-out;
-    }
-    .navbar .nav-links a:hover::after {
-        transform: scaleX(1);
-        transform-origin: bottom left;
-    }
-
-    /* Particle.js Canvas */
-    #particles-js {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        z-index: 1;
-    }
-
+    
     header {
       min-height: 100vh;
       display: flex;
@@ -138,23 +96,13 @@
       overflow: hidden;
     }
 
-    header .header-content {
-        position: relative;
-        z-index: 2;
-    }
-
     header h1 {
       font-family: 'DM Sans', sans-serif;
       font-size: clamp(2.8rem, 7vw, 5rem);
       font-weight: 700;
       margin-bottom: 20px;
       color: #fff;
-      text-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-    header h1 .char {
-        display: inline-block;
-        opacity: 0;
-        transform: translateY(50px) scale(0.5);
+      text-shadow: 0 0 30px rgba(0,0,0,0.6);
     }
 
     header p.subtitle {
@@ -168,18 +116,16 @@
       max-width: 1100px;
       margin: auto;
       padding: 60px 20px;
-      position: relative;
-      z-index: 2;
     }
 
     section {
-      margin-bottom: 100px;
+      margin-bottom: 120px;
+      position: relative;
     }
 
     h2 {
       font-family: 'DM Sans', sans-serif;
       font-size: clamp(2rem, 5vw, 2.8rem);
-      font-weight: 700;
       margin-bottom: 40px;
       position: relative;
       padding-bottom: 15px;
@@ -196,6 +142,10 @@
       border-radius: 2px;
       transform: scaleX(0);
       transform-origin: left;
+      transition: transform 0.8s ease-out;
+    }
+    section.is-visible h2::after {
+        transform: scaleX(1);
     }
     
     .about-content p {
@@ -211,39 +161,57 @@
     }
     
     .project-card, .game-card {
-        background: var(--bg-medium);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-radius: 12px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 16px;
         border: 1px solid var(--border-color);
         padding: 30px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 8px 30px var(--shadow-color);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        box-shadow: 0 10px 40px var(--shadow-color);
         will-change: transform;
         position: relative;
         overflow: hidden;
     }
 
-    /* Spotlight effect for cards */
+    /* Aurora Hover Effect */
+    @keyframes aurora {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     .project-card::before, .game-card::before {
         content: '';
         position: absolute;
-        left: var(--x, 50%);
-        top: var(--y, 50%);
-        transform: translate(-50%, -50%);
-        background: radial-gradient(circle, var(--glow-color) 0%, transparent 50%);
-        width: 300px;
-        height: 300px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(ellipse at center, rgba(51, 160, 255, 0.2), transparent 70%),
+                    linear-gradient(120deg, transparent 0%, rgba(176, 102, 255, 0.2) 50%, transparent 100%);
+        background-size: 200% 200%;
         opacity: 0;
-        transition: opacity 0.4s ease;
+        transition: opacity 0.5s ease;
         pointer-events: none;
+        animation: aurora 8s ease infinite;
     }
 
     .project-card:hover::before, .game-card:hover::before {
         opacity: 1;
     }
+    .project-card:hover, .game-card:hover {
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 15px 50px var(--shadow-color);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .card-content {
+        position: relative;
+        z-index: 2;
+    }
 
-    .project-card h3, .game-card h3 {
+    h3 {
       font-family: 'DM Sans', sans-serif;
       font-size: 1.6rem;
       font-weight: 600;
@@ -269,18 +237,14 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       border: none;
-      cursor: none;
     }
-
     .action-button:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px var(--glow-color);
     }
     
     #llm-section {
-        background: var(--bg-medium);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: var(--glass-bg);
         border: 1px solid var(--border-color);
         border-radius: 12px;
         padding: 40px;
@@ -288,225 +252,185 @@
         text-align: center;
     }
 
-    .contact-info p {
-        margin-bottom: 15px;
-        font-size: 1.15rem;
-    }
-    .contact-info p a {
-        color: var(--accent-primary);
-        text-decoration: none;
-        font-weight: 500;
-    }
-    .contact-info p a:hover {
-        text-decoration: underline;
-    }
-    .contact-icons {
-        margin-top: 30px;
-    }
-    .contact-icons a {
-      margin: 0 15px;
-      color: var(--text-secondary);
-      font-size: 2.2rem;
-      transition: color 0.3s ease, transform 0.3s ease;
-    }
-    .contact-icons a:hover {
-      color: var(--accent-primary);
-      transform: scale(1.2) translateY(-5px);
-    }
-
     footer {
-      background: #0A0A10;
       color: var(--text-secondary);
       text-align: center;
       padding: 40px 20px;
       border-top: 1px solid var(--border-color);
       margin-top: 60px;
-      position: relative;
-      z-index: 2;
+      background: rgba(10, 10, 16, 0.5);
     }
-
-    @media (max-width: 768px) {
-        .navbar .nav-links {
-            display: none;
-        }
-        .projects {
-            grid-template-columns: 1fr;
-        }
-        .cursor-dot, .cursor-dot-outline {
-            display: none;
-        }
-        body {
-            cursor: auto;
-        }
-    }
+    
   </style>
 </head>
 <body>
   
-  <div class="cursor-dot"></div>
-  <div class="cursor-dot-outline"></div>
-
-  <nav class="navbar">
-    <a href="#" class="logo">KAIFU<span>.AI</span></a>
-    <div class="nav-links">
-      <a href="#about">About</a>
-      <a href="#projects">Projects</a>
-      <a href="#games">Games</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </nav>
-
-  <header id="home">
-    <div id="particles-js"></div>
-    <div class="header-content">
-      <h1>Hi, I'm Kaifu</h1>
-      <p class="subtitle gsap-reveal">AI Engineer | Innovator | Creator | Turning Ideas into Intelligent Solutions</p>
-    </div>
-  </header>
-
-  <div class="container">
-    <section id="about" class="content-section">
-      <h2 class="gsap-reveal">About Me</h2>
-      <div class="about-content gsap-reveal">
-        <p>I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future. My journey in AI is driven by a curiosity to explore the unknown and a desire to make a tangible impact.</p>
-      </div>
-    </section>
-
-    <section id="llm-section" class="content-section gsap-reveal">
-        <h2>LLM Research Infographics</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto;">A visual guide to understanding the fundamentals of Large Language Models, their architecture, and applications.</p>
-        <button onclick="window.open('LLMinfograph.html', '_blank')" class="action-button">
-            Open Infographic
-        </button>
-    </section>
-
-    <section id="projects" class="content-section">
-      <h2 class="gsap-reveal">My AI Projects & Research</h2>
-      <div class="projects">
-        <div class="project-card gsap-card">
-          <h3>Vehicle Number Plate Detection</h3>
-          <p>Utilizing OpenCV & Haar Cascades for robust detection and extraction of vehicle number plates with high accuracy, even in challenging conditions.</p>
+  <div class="content-wrapper">
+      <nav class="navbar">
+        <a href="#" class="logo">KAIFU<span>.AI</span></a>
+        <div class="nav-links">
+          <a href="#about" class="active">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#games">Games</a>
+          <a href="#contact">Contact</a>
         </div>
-        <div class="project-card gsap-card">
-          <h3>Cricket Win Predictor</h3>
-          <p>A real-time T20 match analysis tool predicting win probabilities based on dynamic game data, offering insights for fans and analysts.</p>
-        </div>
-        <div class="project-card gsap-card">
-          <h3>AI Shorts Generator</h3>
-          <p>An automated system that crafts engaging, AI-powered short videos featuring animals and emotional cues, tailored for YouTube Shorts.</p>
-        </div>
-        <div class="project-card gsap-card">
-          <h3>Stock Trend Predictor</h3>
-          <p>Developing a model using LSTMs and time-series analysis to forecast stock market trends, aiding in investment decisions.</p>
-        </div>
-      </div>
-    </section>
+      </nav>
 
-    <section id="games" class="content-section">
-        <h2 class="gsap-reveal">My Games</h2>
-        <div class="projects">
-            <div class="game-card gsap-card">
-                <h3>Sky Jumper</h3>
-                <p>Navigate treacherous platforms and soar to new heights in this addictive jumping adventure. How high can you go?</p>
-                <a href="skyjump.html" target="_blank" class="action-button">Play Sky Jumper</a>
+      <header id="home">
+        <h1 class="gsap-reveal-header">Hi, I'm Kaifu</h1>
+        <p class="subtitle gsap-reveal-header">AI Engineer | Innovator | Creator | Turning Ideas into Intelligent Solutions</p>
+      </header>
+
+      <div class="container">
+        <section id="about" class="content-section">
+          <h2 class="gsap-reveal">About Me</h2>
+          <div class="about-content gsap-reveal">
+            <p>I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future. My journey in AI is driven by a curiosity to explore the unknown and a desire to make a tangible impact.</p>
+          </div>
+        </section>
+
+        <section id="llm-section" class="content-section gsap-reveal">
+            <h2>LLM Research Infographics</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto;">A visual guide to understanding the fundamentals of Large Language Models, their architecture, and applications.</p>
+            <button onclick="window.open('LLMinfograph.html', '_blank')" class="action-button">
+                Open Infographic
+            </button>
+        </section>
+
+        <section id="projects" class="content-section">
+          <h2 class="gsap-reveal">My AI Projects & Research</h2>
+          <div class="projects">
+            <div class="project-card gsap-card">
+              <div class="card-content">
+                <h3>Vehicle Number Plate Detection</h3>
+                <p>Utilizing OpenCV & Haar Cascades for robust detection and extraction of vehicle number plates with high accuracy, even in challenging conditions.</p>
+              </div>
             </div>
-            <div class="game-card gsap-card">
-                <h3>Car Crash Aviator</h3>
-                <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
-                <a href="car-crash-aviator_Version2.html" target="_blank" class="action-button">Play Car Crash Aviator</a>
+            <div class="project-card gsap-card">
+              <div class="card-content">
+                  <h3>Cricket Win Predictor</h3>
+                  <p>A real-time T20 match analysis tool predicting win probabilities based on dynamic game data, offering insights for fans and analysts.</p>
+              </div>
             </div>
-            <div class="game-card gsap-card">
-                <h3>Red Comet Aviator</h3>
-                <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
-                <a href="Avaitorr.html" target="_blank" class="action-button">Play Red Comet Aviator</a>
+            <div class="project-card gsap-card">
+               <div class="card-content">
+                  <h3>AI Shorts Generator</h3>
+                  <p>An automated system that crafts engaging, AI-powered short videos featuring animals and emotional cues, tailored for YouTube Shorts.</p>
+              </div>
             </div>
-        </div>
-    </section>
+            <div class="project-card gsap-card">
+               <div class="card-content">
+                  <h3>Stock Trend Predictor</h3>
+                  <p>Developing a model using LSTMs and time-series analysis to forecast stock market trends, aiding in investment decisions.</p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-    <section id="contact" class="content-section">
-      <h2 class="gsap-reveal">Get In Touch</h2>
-      <div class="contact-info gsap-reveal">
-        <p>Interested in collaborating or have a question? Feel free to reach out!</p>
-        <p>Email: <a href="mailto:gmkaifkaifu@gmail.com">gmkaifkaifu@gmail.com</a></p>
-        <div class="contact-icons">
-          <a href="https://github.com/GMKAIFU" target="_blank" aria-label="GitHub Profile"><i class="fab fa-github"></i></a>
-          <a href="https://www.youtube.com/@gmkaif" target="_blank" aria-label="YouTube Channel"><i class="fab fa-youtube"></i></a>
-        </div>
+        <section id="games" class="content-section">
+            <h2 class="gsap-reveal">My Games</h2>
+            <div class="projects">
+                <div class="game-card gsap-card">
+                   <div class="card-content">
+                        <h3>Sky Jumper</h3>
+                        <p>Navigate treacherous platforms and soar to new heights in this addictive jumping adventure. How high can you go?</p>
+                        <a href="skyjump.html" target="_blank" class="action-button">Play Sky Jumper</a>
+                   </div>
+                </div>
+                <div class="game-card gsap-card">
+                    <div class="card-content">
+                        <h3>Car Crash Aviator</h3>
+                        <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
+                        <a href="car-crash-aviator_Version2.html" target="_blank" class="action-button">Play Car Crash Aviator</a>
+                    </div>
+                </div>
+                <div class="game-card gsap-card">
+                    <div class="card-content">
+                        <h3>Red Comet Aviator</h3>
+                        <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
+                        <a href="Avaitorr.html" target="_blank" class="action-button">Play Red Comet Aviator</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="content-section">
+          <h2 class="gsap-reveal">Get In Touch</h2>
+          <div class="contact-info gsap-reveal" style="text-align:center;">
+            <p>Interested in collaborating or have a question? Feel free to reach out!</p>
+            <p>Email: <a href="mailto:gmkaifkaifu@gmail.com">gmkaifkaifu@gmail.com</a></p>
+            <div style="margin-top:30px;">
+              <a href="https://github.com/GMKAIFU" target="_blank" aria-label="GitHub Profile" style="margin: 0 15px; color: var(--text-secondary); font-size: 2.2rem;"><i class="fab fa-github"></i></a>
+              <a href="https://www.youtube.com/@gmkaif" target="_blank" aria-label="YouTube Channel" style="margin: 0 15px; color: var(--text-secondary); font-size: 2.2rem;"><i class="fab fa-youtube"></i></a>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
+
+      <footer>
+        &copy; 2025 Kaifu | Innovating with AI
+      </footer>
   </div>
 
-  <footer>
-    &copy; <span id="currentYear"></span> Kaifu | Innovating with AI
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
   <script>
     document.addEventListener('DOMContentLoaded', () => {
         gsap.registerPlugin(ScrollTrigger);
 
-        // --- Custom Cursor ---
-        const cursorDot = document.querySelector(".cursor-dot");
-        const cursorDotOutline = document.querySelector(".cursor-dot-outline");
-        window.addEventListener("mousemove", function (e) {
-            const posX = e.clientX;
-            const posY = e.clientY;
-            cursorDot.style.left = `${posX}px`;
-            cursorDot.style.top = `${posY}px`;
-            gsap.to(cursorDotOutline, {
-                duration: 0.4,
-                left: `${posX}px`,
-                top: `${posY}px`,
-            });
+        const body = document.body;
+        const sections = gsap.utils.toArray('section.content-section');
+
+        // --- DYNAMIC BACKGROUND MORPHING ---
+        const bgColors = {
+            about: { c1: '#0D1224', c2: '#121A3A', c3: '#182848' },
+            llm:   { c1: '#0F1035', c2: '#2F0F3D', c3: '#182848' },
+            projects: { c1: '#22092C', c2: '#52057B', c3: '#892CDC' },
+            games: { c1: '#00224D', c2: '#0056b3', c3: '#54086B' },
+            contact: { c1: '#0D1224', c2: '#121A3A', c3: '#221D4B' }
+        };
+
+        sections.forEach(section => {
+            const sectionID = section.id;
+            const colors = bgColors[sectionID];
+            if (colors) {
+                ScrollTrigger.create({
+                    trigger: section,
+                    start: 'top 50%',
+                    end: 'bottom 50%',
+                    onEnter: () => gsap.to(body.style, {
+                        '--bg-color-1': colors.c1,
+                        '--bg-color-2': colors.c2,
+                        '--bg-color-3': colors.c3,
+                        duration: 1.5,
+                        ease: 'sine.inOut'
+                    }),
+                    onEnterBack: () => gsap.to(body.style, {
+                        '--bg-color-1': colors.c1,
+                        '--bg-color-2': colors.c2,
+                        '--bg-color-3': colors.c3,
+                        duration: 1.5,
+                        ease: 'sine.inOut'
+                    })
+                });
+            }
         });
 
-        // --- Particle.js Background ---
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
-                "color": { "value": "#ffffff" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5, "random": true },
-                "size": { "value": 3, "random": true },
-                "line_linked": { "enable": true, "distance": 150, "color": "#8b949e", "opacity": 0.4, "width": 1 },
-                "move": { "enable": true, "speed": 1, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
-            },
-            "interactivity": {
-                "detect_on": "canvas",
-                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
-                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 }, "repulse": { "distance": 200, "duration": 0.4 }, "push": { "particles_nb": 4 }, "remove": { "particles_nb": 2 } }
-            },
-            "retina_detect": true
+        // --- HEADER & ELEMENT REVEALS ---
+        gsap.from('.gsap-reveal-header', {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            stagger: 0.2,
+            ease: 'power3.out',
+            delay: 0.2
         });
-
-        // --- Header Animation ---
-        const mainHeading = document.querySelector('header h1');
-        const originalText = mainHeading.textContent;
-        mainHeading.textContent = ''; 
-        originalText.split('').forEach(char => {
-            const span = document.createElement('span');
-            span.className = 'char';
-            span.textContent = char === ' ' ? '\u00A0' : char;
-            mainHeading.appendChild(span);
-        });
-        gsap.to(".char", {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            stagger: 0.04,
-            duration: 0.8,
-            ease: "power3.out",
-            delay: 0.5
-        });
-
-        // --- General Section & Element Reveals ---
+        
+        // General Section & Element Reveals with Parallax
         gsap.utils.toArray('.gsap-reveal').forEach(elem => {
             gsap.fromTo(elem, {
                 opacity: 0,
-                y: 50
+                y: 100 // Start further down
             }, {
                 opacity: 1,
                 y: 0,
@@ -515,77 +439,15 @@
                 scrollTrigger: {
                     trigger: elem,
                     start: 'top 85%',
-                    toggleActions: 'play none none none'
+                    end: 'bottom 20%',
+                    scrub: 1, // Add parallax scrub effect
+                    onEnter: () => elem.closest('section')?.classList.add('is-visible'), // For h2 underline
                 }
             });
         });
 
-        // Animate H2 underlines
-        gsap.utils.toArray('h2.gsap-reveal').forEach(h2 => {
-            gsap.to(h2, {
-                scrollTrigger: {
-                    trigger: h2,
-                    start: "top 85%",
-                    onEnter: () => h2.style.setProperty('--after-transform', 'scaleX(1)'),
-                },
-                "--after-transform": "scaleX(1)",
-                duration: 0.8,
-                ease: "power3.out"
-            });
-             gsap.to(h2.style, {
-                "--after-transform": "scaleX(1)",
-                duration: 0.8,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: h2,
-                    start: "top 85%",
-                },
-            });
-
-             const after = h2.querySelector("::after");
-              gsap.to(after, {
-                scaleX: 1,
-                duration: 0.8,
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: h2,
-                    start: "top 85%",
-                },
-            });
-        });
-
-        // --- Card Animations ---
-        const cards = gsap.utils.toArray('.gsap-card');
-        cards.forEach(card => {
-            // 3D Tilt Effect
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (y - centerY) / 20; // Slower rotation
-                const rotateY = -(x - centerX) / 20;
-                gsap.to(card, {
-                    duration: 0.5,
-                    transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`,
-                    ease: "power2.out"
-                });
-
-                // Spotlight effect
-                card.style.setProperty('--x', `${x}px`);
-                card.style.setProperty('--y', `${y}px`);
-            });
-
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, {
-                    duration: 0.5,
-                    transform: 'perspective(1000px) rotateX(0) rotateY(0) scale(1)',
-                    ease: "power2.out"
-                });
-            });
-            
-            // Scroll Reveal for Cards
+        // --- CARD REVEAL ANIMATION ---
+        gsap.utils.toArray('.gsap-card').forEach(card => {
             gsap.from(card, {
                 scrollTrigger: {
                     trigger: card,
@@ -594,15 +456,28 @@
                 },
                 opacity: 0,
                 y: 60,
-                rotateZ: -5,
+                rotateZ: -3,
                 duration: 0.8,
                 ease: 'power3.out'
             });
         });
 
-        // --- Footer Year ---
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        // Active nav link on scroll
+        sections.forEach(section => {
+            ScrollTrigger.create({
+                trigger: section,
+                start: 'top center',
+                end: 'bottom center',
+                onToggle: self => {
+                    const link = document.querySelector(`.nav-links a[href="#${section.id}"]`);
+                    if (self.isActive) {
+                        document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+                        if (link) link.classList.add('active');
+                    }
+                }
+            });
+        });
     });
   </script>
 </body>
-    </html>
+  </html>
