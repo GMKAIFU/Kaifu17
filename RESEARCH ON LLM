@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architectures of Intelligence: An LLM Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+            color: #212529;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        .kpi-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .flowchart-node {
+            background-color: #E9ECEF;
+            border-left: 4px solid #0D6EFD;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .flowchart-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6C757D;
+            font-size: 2rem;
+            margin: 0.5rem 0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 2.5rem;
+            border-left: 2px solid #CED4DA;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -0.7rem;
+            top: 0;
+            height: 1.25rem;
+            width: 1.25rem;
+            background-color: #0D6EFD;
+            border-radius: 9999px;
+            border: 4px solid #F8F9FA;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <main class="container mx-auto px-4 py-8 md:py-16">
+
+        <header class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-black text-gray-800 tracking-tight">Architectures of Intelligence</h1>
+            <p class="mt-4 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">An interactive deep-dive into the world
+                of Large Language Models, from their creation to their impact on our future.</p>
+        </header>
+
+        <section id="introduction" class="mb-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="kpi-card lg:col-span-2">
+                    <h3 class="text-xl font-bold mb-2">What is a Large Language Model (LLM)?</h3>
+                    <p class="text-gray-600 mb-4">An LLM is a type of AI built on a neural network, trained on vast
+                        quantities of text and code. Its core function is to understand patterns and predict the next
+                        most likely piece of a sequence—a "token." While simple in concept, at massive scale this
+                        enables complex emergent abilities like reasoning, summarization, and creativity.</p>
+                    <p class="text-gray-600">Think of it like an apprentice who has read an entire library. It doesn't
+                        memorize every book but learns the underlying structure of language, style, and knowledge to
+                        generate new, coherent text.</p>
+                </div>
+                <div class="kpi-card text-center flex flex-col justify-center items-center bg-[#0D6EFD] text-white">
+                    <span class="text-5xl md:text-6xl font-black">15T+</span>
+                    <span class="mt-2 text-lg font-semibold">Tokens Trained</span>
+                    <p class="text-sm mt-1 opacity-80">(e.g., Llama 3)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="creation" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-12">The Making of a Mind: The LLM Lifecycle</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+
+                <div class="kpi-card">
+                    <h3 class="text-xl font-bold mb-6">From Rules to Attention: A Brief History</h3>
+                    <div class="relative">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <p class="font-semibold text-lg">1950s-1970s: Rule-Based NLP</p>
+                            <p class="text-gray-600 text-sm">Systems like ELIZA used handcrafted rules, which were
+                                brittle and couldn't handle ambiguity.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <p class="font-semibold text-lg">1980s-2000s: Statistical Revolution</p>
+                            <p class="text-gray-600 text-sm">A shift to learning statistical patterns from data, using
+                                techniques like N-grams.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <p class="font-semibold text-lg">Early 2010s: Recurrent Networks (LSTMs)</p>
+                            <p class="text-gray-600 text-sm">Deep learning with LSTMs captured long-range dependencies
+                                but processed text sequentially, creating a bottleneck.</p>
+                        </div>
+                        <div class="timeline-item border-l-transparent">
+                            <div class="timeline-dot"></div>
+                            <p class="font-semibold text-lg">2017: The Transformer</p>
+                            <p class="text-gray-600 text-sm">The "Attention Is All You Need" paper introduced a parallel
+                                processing architecture, enabling massive scaling and giving birth to modern LLMs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <h3 class="text-xl font-bold mb-6">The Data & Training Pipeline</h3>
+                    <p class="text-gray-600 text-sm mb-6">Foundational models are not programmed, they are trained. This
+                        involves a multi-stage process to source, clean, and feed massive datasets into the model, which
+                        is then refined for safety and helpfulness.</p>
+                    <div>
+                        <div class="flowchart-node">1. Data Sourcing
+                            <br><span class="text-xs font-normal text-gray-600">(Common Crawl, Books, Code)</span></div>
+                        <div class="flowchart-arrow">↓</div>
+                        <div class="flowchart-node">2. Pre-processing
+                            <br><span class="text-xs font-normal text-gray-600">(Filtering, Deduplication)</span></div>
+                        <div class="flowchart-arrow">↓</div>
+                        <div class="flowchart-node">3. Pre-training
+                            <br><span class="text-xs font-normal text-gray-600">(Self-supervised learning on GPUs)</span>
+                        </div>
+                        <div class="flowchart-arrow">↓</div>
+                        <div class="flowchart-node">4. Alignment
+                            <br><span class="text-xs font-normal text-gray-600">(Fine-tuning & RLHF)</span></div>
+                        <div class="flowchart-arrow">↓</div>
+                        <div class="flowchart-node bg-green-200 border-green-500">✅ Deployed & Helpful LLM</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="landscape" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-12">The Competitive Landscape</h2>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
+
+                <div class="kpi-card md:col-span-3">
+                    <h3 class="text-xl font-bold mb-2">Frontier Model Comparison</h3>
+                    <p class="text-gray-600 text-sm mb-4">Leading models compete on a range of capabilities. While some,
+                        like GPT-4o, excel at general reasoning, others like Gemini lead in multimodality, Claude in
+                        safety, and Llama in open-source customizability.</p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="modelComparisonChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="kpi-card md:col-span-2">
+                    <h3 class="text-xl font-bold mb-2">Ecosystem Strategy: Open vs. Closed</h3>
+                    <p class="text-gray-600 text-sm mb-4">The market is split. Proprietary APIs offer ease of use and
+                        cutting-edge performance, while open-source models provide control, privacy, and customization.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="ecosystemSplitChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="capabilities" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-12">Capabilities Unleashed: Real-World Impact</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="kpi-card">
+                    <div class="flex items-center mb-4">
+                        <span class="text-3xl mr-4">⚕️</span>
+                        <h3 class="text-xl font-bold">Healthcare</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm">LLMs are automating clinical notes, assisting in diagnostics by
+                        analyzing symptoms and medical images, and powering virtual training simulators for medical
+                        students.</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="flex items-center mb-4">
+                        <span class="text-3xl mr-4">🏦</span>
+                        <h3 class="text-xl font-bold">Finance</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm">Applications include real-time fraud detection, 24/7 customer
+                        support chatbots, and automating the analysis of dense financial reports like 10-K filings.</p>
+                </div>
+                <div class="kpi-card">
+                    <div class="flex items-center mb-4">
+                        <span class="text-3xl mr-4">🎓</span>
+                        <h3 class="text-xl font-bold">Education</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm">LLMs act as personalized tutors, help teachers generate lesson
+                        plans and quizzes, and power adaptive learning platforms like Duolingo.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-12">Inherent Limitations & Ethical Challenges</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="kpi-card">
+                    <h3 class="text-xl font-bold mb-4">Security Risks: A New Attack Surface</h3>
+                    <p class="text-gray-600 text-sm mb-4">The OWASP Top 10 for LLMs highlights new vulnerabilities.
+                        Prompt Injection, where attackers hijack the model's instructions, is the most prominent threat.
+                    </p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="securityRisksChart"></canvas>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-xl font-bold mb-4">Bias, Hallucinations & Environmental Cost</h3>
+                    <p class="text-gray-600 text-sm mb-4">Models reflect biases from their training data, can
+                        confidently "hallucinate" incorrect facts, and have a significant environmental footprint.</p>
+                    <div class="space-y-6">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-4">🌍</span>
+                            <div>
+                                <p class="font-semibold">Environmental Footprint</p>
+                                <p class="text-sm text-gray-600">Training a single large model can consume
+                                    <strong>700,000L of water</strong> and have a carbon footprint of multiple cars.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-4">💬</span>
+                            <div>
+                                <p class="font-semibold">Hallucinations</p>
+                                <p class="text-sm text-gray-600">A core failure mode where models generate plausible but
+                                    false information due to their probabilistic nature.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-4">⚖️</span>
+                            <div>
+                                <p class="font-semibold">Amplified Bias</p>
+                                <p class="text-sm text-gray-600">LLMs can perpetuate and amplify societal biases related
+                                    to gender, race, and profession found in training data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="future" class="mb-16">
+            <h2 class="text-3xl font-bold text-center mb-12">The Next Horizon</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="kpi-card">
+                    <h3 class="text-xl font-bold mb-2">The Rise of Multimodality</h3>
+                    <p class="text-gray-600 text-sm mb-4">The frontier is moving beyond text. Large Multimodal Models
+                        (LMMs) can natively process and reason across text, images, audio, and even video, enabling more
+                        holistic AI.</p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="multimodalityChart"></canvas>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <h3 class="text-xl font-bold mb-2">The Drive for Efficiency</h3>
+                    <p class="text-gray-600 text-sm mb-4">In response to high costs, a major trend is creating smaller,
+                        faster models via techniques like quantization and knowledge distillation, enabling on-device
+                        AI.</p>
+                    <div class="chart-container h-80 md:h-96">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-200">
+            <p class="text-gray-600">The future of AI will be defined by a careful balance between pushing capabilities
+                and ensuring safety, fairness, and transparency.</p>
+            <p class="text-xs text-gray-400 mt-4">Infographic created based on the "Architectures of Intelligence"
+                report.</p>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const vibrantPalette = {
+                blue: '#0D6EFD',
+                green: '#198754',
+                yellow: '#FFC107',
+                red: '#DC3545',
+                teal: '#20C997',
+                gray: '#6C757D',
+                lightGray: '#E9ECEF',
+                darkGray: '#343A40',
+            };
+            
+            const wrapLabel = (label, maxLength = 16) => {
+                if (label.length <= maxLength) {
+                    return label;
+                }
+                const words = label.split(' ');
+                let lines = [];
+                let currentLine = '';
+                for (const word of words) {
+                    if ((currentLine + ' ' + word).trim().length > maxLength && currentLine.length > 0) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = (currentLine + ' ' + word).trim();
+                    }
+                }
+                if (currentLine.length > 0) {
+                    lines.push(currentLine);
+                }
+                return lines;
+            };
+            
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                  return label.join(' ');
+                } else {
+                  return label;
+                }
+            };
+
+            const defaultChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: vibrantPalette.darkGray,
+                            font: {
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: tooltipTitleCallback,
+                        },
+                        backgroundColor: vibrantPalette.darkGray,
+                        titleFont: {
+                            family: "'Inter', sans-serif",
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            family: "'Inter', sans-serif",
+                            size: 12
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { 
+                            color: vibrantPalette.gray,
+                            font: { family: "'Inter', sans-serif" }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: vibrantPalette.gray,
+                            font: { family: "'Inter', sans-serif" }
+                        },
+                         grid: {
+                            color: '#dee2e6'
+                        }
+                    }
+                }
+            };
+
+            const modelComparisonCtx = document.getElementById('modelComparisonChart');
+            if(modelComparisonCtx) {
+                new Chart(modelComparisonCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Reasoning', 'Speed', 'Multimodality', 'Safety', 'Customizability'],
+                        datasets: [{
+                            label: 'GPT-4o',
+                            data: [9, 8, 8, 7, 3],
+                            borderColor: vibrantPalette.blue,
+                            backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                            pointBackgroundColor: vibrantPalette.blue,
+                        }, {
+                            label: 'Gemini 1.5 Pro',
+                            data: [8, 9, 9, 7, 4],
+                            borderColor: vibrantPalette.green,
+                            backgroundColor: 'rgba(25, 135, 84, 0.2)',
+                            pointBackgroundColor: vibrantPalette.green,
+                        }, {
+                            label: 'Llama 3',
+                            data: [7, 8, 3, 6, 10],
+                            borderColor: vibrantPalette.red,
+                            backgroundColor: 'rgba(220, 53, 69, 0.2)',
+                            pointBackgroundColor: vibrantPalette.red,
+                        }, {
+                            label: 'Claude 3.5',
+                            data: [8, 8, 7, 9, 3],
+                            borderColor: vibrantPalette.yellow,
+                            backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                            pointBackgroundColor: vibrantPalette.yellow,
+                        }]
+                    },
+                    options: {
+                        ...defaultChartOptions,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: '#dee2e6'
+                                },
+                                grid: {
+                                    color: '#dee2e6'
+                                },
+                                pointLabels: {
+                                    color: vibrantPalette.darkGray,
+                                    font: {
+                                        size: 12,
+                                        family: "'Inter', sans-serif",
+                                        weight: 600
+                                    }
+                                },
+                                ticks: {
+                                    backdropColor: 'transparent',
+                                    color: vibrantPalette.gray
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const ecosystemSplitCtx = document.getElementById('ecosystemSplitChart');
+            if(ecosystemSplitCtx) {
+                new Chart(ecosystemSplitCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Proprietary API (OpenAI, Google, Anthropic)', 'Open Source (Meta, etc.)'],
+                        datasets: [{
+                            data: [65, 35],
+                            backgroundColor: [vibrantPalette.blue, vibrantPalette.green],
+                            borderColor: '#F8F9FA',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                         plugins: {
+                            legend: { position: 'bottom', labels: { color: vibrantPalette.darkGray, font: { family: "'Inter', sans-serif" }}},
+                            tooltip: {
+                                callbacks: { title: tooltipTitleCallback },
+                                backgroundColor: vibrantPalette.darkGray
+                            }
+                        }
+                    }
+                });
+            }
+
+            const securityRisksCtx = document.getElementById('securityRisksChart');
+            if(securityRisksCtx) {
+                const securityLabels = [
+                    wrapLabel('LLM01: Prompt Injection'),
+                    wrapLabel('LLM02: Insecure Output Handling'),
+                    wrapLabel('LLM03: Training Data Poisoning'),
+                    wrapLabel('LLM04: DoS Attack'),
+                    wrapLabel('LLM05: Supply Chain Vulnerabilities'),
+                    wrapLabel('LLM06: Sensitive Information Disclosure')
+                ];
+                new Chart(securityRisksCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: securityLabels,
+                        datasets: [{
+                            label: 'Perceived Risk Score',
+                            data: [9.5, 8.0, 8.5, 7.0, 7.5, 9.0],
+                            backgroundColor: [vibrantPalette.red, vibrantPalette.yellow, vibrantPalette.blue, vibrantPalette.gray, vibrantPalette.teal, vibrantPalette.green],
+                        }]
+                    },
+                    options: {
+                       ...defaultChartOptions,
+                       indexAxis: 'y',
+                       scales: {
+                            x: { max: 10 },
+                            y: { grid: { display: false } }
+                       },
+                       plugins: {
+                            legend: { display: false },
+                            tooltip: { callbacks: { title: tooltipTitleCallback }, backgroundColor: vibrantPalette.darkGray }
+                       }
+                    }
+                });
+            }
+
+            const multimodalityCtx = document.getElementById('multimodalityChart');
+            if(multimodalityCtx) {
+                new Chart(multimodalityCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2020', '2021', '2022', '2023', '2024', '2025 (Proj.)'],
+                        datasets: [{
+                            label: 'Text-Only Models',
+                            data: [95, 90, 80, 60, 40, 20],
+                            borderColor: vibrantPalette.gray,
+                            tension: 0.3,
+                            fill: false
+                        }, {
+                            label: 'Multimodal Models',
+                            data: [5, 10, 20, 40, 60, 80],
+                            borderColor: vibrantPalette.blue,
+                            backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        ...defaultChartOptions,
+                        plugins: {
+                            ...defaultChartOptions.plugins,
+                            title: { display: true, text: 'Model Capabilities by Modality (%)', color: vibrantPalette.darkGray, font: { size: 14 } }
+                        }
+                    }
+                });
+            }
+
+            const efficiencyCtx = document.getElementById('efficiencyChart');
+            if(efficiencyCtx) {
+                 new Chart(efficiencyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2021', '2022', '2023', '2024', '2025 (Proj.)'],
+                        datasets: [{
+                            label: 'Focus on Frontier Scale',
+                            data: [80, 85, 90, 70, 60],
+                            borderColor: vibrantPalette.red,
+                            tension: 0.3,
+                            fill: false
+                        }, {
+                            label: 'Focus on Efficiency & Small Models',
+                            data: [20, 15, 10, 30, 40],
+                            borderColor: vibrantPalette.green,
+                            tension: 0.3,
+                            fill: true,
+                            backgroundColor: 'rgba(25, 135, 84, 0.2)'
+                        }]
+                    },
+                     options: {
+                        ...defaultChartOptions,
+                        plugins: {
+                            ...defaultChartOptions.plugins,
+                            title: { display: true, text: 'Research Focus: Scale vs. Efficiency (%)', color: vibrantPalette.darkGray, font: { size: 14 } }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
