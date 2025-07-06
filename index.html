@@ -8,17 +8,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      /* Color palette is now controlled by JS, but we set initial defaults */
-      --bg-color-1: #0D1224;
-      --bg-color-2: #121A3A;
-      --bg-color-3: #221D4B;
-      
-      --bg-dark: #0A0A10;
-      --glass-bg: rgba(15, 17, 26, 0.4);
+      /* NEW: CSS variables for a movable radial gradient */
+      --grad-x: 50%;
+      --grad-y: 50%;
+      --c1: #0D1224;
+      --c2: #121A3A;
+      --c3: #182848;
+
+      --glass-bg: rgba(22, 27, 44, 0.4); /* Glassmorphism background with more transparency */
       --text-primary: #EAEBF0;
       --text-secondary: #A0AEC0;
-      --accent-primary: #33A0FF; /* Brighter Blue */
-      --accent-secondary: #B066FF; /* Brighter Purple */
+      --accent-primary: #33A0FF;
+      --accent-secondary: #B066FF;
       --border-color: rgba(255, 255, 255, 0.1);
       --shadow-color: rgba(0, 0, 0, 0.5);
       --glow-color: rgba(51, 160, 255, 0.5);
@@ -30,23 +31,27 @@
       box-sizing: border-box;
     }
 
+    /* The new background element */
+    #background-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Place it behind everything */
+        background: radial-gradient(circle at var(--grad-x) var(--grad-y), var(--c1), var(--c2), var(--c3));
+    }
+
     body {
       font-family: 'Inter', 'DM Sans', sans-serif;
+      background-color: #0A0A10; /* Fallback solid color */
       color: var(--text-primary);
       line-height: 1.7;
       overflow-x: hidden;
-      /* The magic background */
-      background: linear-gradient(135deg, var(--bg-color-1), var(--bg-color-2), var(--bg-color-3));
-      transition: background 1s ease-out;
-    }
-    
-    .content-wrapper {
-        position: relative;
-        z-index: 2;
     }
 
     .navbar {
-      background-color: var(--glass-bg);
+      background-color: rgba(15, 17, 26, 0.6);
       backdrop-filter: blur(15px);
       -webkit-backdrop-filter: blur(15px);
       padding: 15px 5%;
@@ -59,7 +64,6 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      transition: box-shadow 0.3s ease;
     }
 
     .navbar .logo {
@@ -93,10 +97,9 @@
       text-align: center;
       padding: 120px 20px 60px;
       position: relative;
-      overflow: hidden;
     }
 
-    header h1 {
+    h1 {
       font-family: 'DM Sans', sans-serif;
       font-size: clamp(2.8rem, 7vw, 5rem);
       font-weight: 700;
@@ -105,7 +108,7 @@
       text-shadow: 0 0 30px rgba(0,0,0,0.6);
     }
 
-    header p.subtitle {
+    p.subtitle {
       font-size: clamp(1rem, 2.5vw, 1.5rem);
       color: var(--text-secondary);
       max-width: 650px;
@@ -116,11 +119,11 @@
       max-width: 1100px;
       margin: auto;
       padding: 60px 20px;
+      position: relative;
     }
 
     section {
       margin-bottom: 120px;
-      position: relative;
     }
 
     h2 {
@@ -129,7 +132,6 @@
       margin-bottom: 40px;
       position: relative;
       padding-bottom: 15px;
-      color: var(--text-primary);
     }
     h2::after {
       content: '';
@@ -148,12 +150,6 @@
         transform: scaleX(1);
     }
     
-    .about-content p {
-        font-size: 1.15rem;
-        color: var(--text-secondary);
-        max-width: 800px;
-    }
-
     .projects {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -169,12 +165,10 @@
         padding: 30px;
         transition: transform 0.4s ease, box-shadow 0.4s ease;
         box-shadow: 0 10px 40px var(--shadow-color);
-        will-change: transform;
         position: relative;
         overflow: hidden;
     }
-
-    /* Aurora Hover Effect */
+    
     @keyframes aurora {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -184,10 +178,7 @@
     .project-card::before, .game-card::before {
         content: '';
         position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
+        left: 0; top: 0; width: 100%; height: 100%;
         background: radial-gradient(ellipse at center, rgba(51, 160, 255, 0.2), transparent 70%),
                     linear-gradient(120deg, transparent 0%, rgba(176, 102, 255, 0.2) 50%, transparent 100%);
         background-size: 200% 200%;
@@ -197,51 +188,26 @@
         animation: aurora 8s ease infinite;
     }
 
-    .project-card:hover::before, .game-card:hover::before {
-        opacity: 1;
-    }
+    .project-card:hover::before, .game-card:hover::before { opacity: 1; }
     .project-card:hover, .game-card:hover {
         transform: translateY(-10px) scale(1.03);
         box-shadow: 0 15px 50px var(--shadow-color);
         border-color: rgba(255, 255, 255, 0.2);
     }
     
-    .card-content {
-        position: relative;
-        z-index: 2;
-    }
-
-    h3 {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: var(--accent-primary);
-      margin-bottom: 15px;
-    }
-
-    .project-card p, .game-card p {
-      font-size: 1.05rem;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
-    }
+    .card-content { position: relative; z-index: 2; }
+    h3 { font-family: 'DM Sans', sans-serif; font-size: 1.6rem; color: var(--accent-primary); margin-bottom: 15px; }
+    .project-card p, .game-card p { font-size: 1.05rem; color: var(--text-secondary); margin-bottom: 20px; }
 
     .action-button {
       display: inline-block;
       background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
-      color: #fff;
-      padding: 14px 30px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
+      color: #fff; padding: 14px 30px; border-radius: 8px; text-decoration: none;
+      font-weight: 600; font-family: 'DM Sans', sans-serif;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      border: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4); border: none;
     }
-    .action-button:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px var(--glow-color);
-    }
+    .action-button:hover { transform: translateY(-5px); box-shadow: 0 10px 25px var(--glow-color); }
     
     #llm-section {
         background: var(--glass-bg);
@@ -260,11 +226,12 @@
       margin-top: 60px;
       background: rgba(10, 10, 16, 0.5);
     }
-    
   </style>
 </head>
 <body>
   
+  <div id="background-canvas"></div>
+
   <div class="content-wrapper">
       <nav class="navbar">
         <a href="#" class="logo">KAIFU<span>.AI</span></a>
@@ -284,9 +251,7 @@
       <div class="container">
         <section id="about" class="content-section">
           <h2 class="gsap-reveal">About Me</h2>
-          <div class="about-content gsap-reveal">
-            <p>I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future. My journey in AI is driven by a curiosity to explore the unknown and a desire to make a tangible impact.</p>
-          </div>
+          <p class="gsap-reveal" style="font-size: 1.15rem; color: var(--text-secondary); max-width: 800px;">I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future. My journey in AI is driven by a curiosity to explore the unknown and a desire to make a tangible impact.</p>
         </section>
 
         <section id="llm-section" class="content-section gsap-reveal">
@@ -300,57 +265,19 @@
         <section id="projects" class="content-section">
           <h2 class="gsap-reveal">My AI Projects & Research</h2>
           <div class="projects">
-            <div class="project-card gsap-card">
-              <div class="card-content">
-                <h3>Vehicle Number Plate Detection</h3>
-                <p>Utilizing OpenCV & Haar Cascades for robust detection and extraction of vehicle number plates with high accuracy, even in challenging conditions.</p>
-              </div>
-            </div>
-            <div class="project-card gsap-card">
-              <div class="card-content">
-                  <h3>Cricket Win Predictor</h3>
-                  <p>A real-time T20 match analysis tool predicting win probabilities based on dynamic game data, offering insights for fans and analysts.</p>
-              </div>
-            </div>
-            <div class="project-card gsap-card">
-               <div class="card-content">
-                  <h3>AI Shorts Generator</h3>
-                  <p>An automated system that crafts engaging, AI-powered short videos featuring animals and emotional cues, tailored for YouTube Shorts.</p>
-              </div>
-            </div>
-            <div class="project-card gsap-card">
-               <div class="card-content">
-                  <h3>Stock Trend Predictor</h3>
-                  <p>Developing a model using LSTMs and time-series analysis to forecast stock market trends, aiding in investment decisions.</p>
-              </div>
-            </div>
+            <div class="project-card gsap-card"><div class="card-content"><h3>Vehicle Number Plate Detection</h3><p>Utilizing OpenCV & Haar Cascades for robust detection and extraction of vehicle number plates with high accuracy.</p></div></div>
+            <div class="project-card gsap-card"><div class="card-content"><h3>Cricket Win Predictor</h3><p>A real-time T20 match analysis tool predicting win probabilities based on dynamic game data, offering insights for fans.</p></div></div>
+            <div class="project-card gsap-card"><div class="card-content"><h3>AI Shorts Generator</h3><p>An automated system that crafts engaging, AI-powered short videos featuring animals and emotional cues, tailored for YouTube Shorts.</p></div></div>
+            <div class="project-card gsap-card"><div class="card-content"><h3>Stock Trend Predictor</h3><p>Developing a model using LSTMs and time-series analysis to forecast stock market trends, aiding in investment decisions.</p></div></div>
           </div>
         </section>
 
         <section id="games" class="content-section">
             <h2 class="gsap-reveal">My Games</h2>
             <div class="projects">
-                <div class="game-card gsap-card">
-                   <div class="card-content">
-                        <h3>Sky Jumper</h3>
-                        <p>Navigate treacherous platforms and soar to new heights in this addictive jumping adventure. How high can you go?</p>
-                        <a href="skyjump.html" target="_blank" class="action-button">Play Sky Jumper</a>
-                   </div>
-                </div>
-                <div class="game-card gsap-card">
-                    <div class="card-content">
-                        <h3>Car Crash Aviator</h3>
-                        <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
-                        <a href="car-crash-aviator_Version2.html" target="_blank" class="action-button">Play Car Crash Aviator</a>
-                    </div>
-                </div>
-                <div class="game-card gsap-card">
-                    <div class="card-content">
-                        <h3>Red Comet Aviator</h3>
-                        <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
-                        <a href="Avaitorr.html" target="_blank" class="action-button">Play Red Comet Aviator</a>
-                    </div>
-                </div>
+                <div class="game-card gsap-card"><div class="card-content"><h3>Sky Jumper</h3><p>Navigate treacherous platforms and soar to new heights in this addictive jumping adventure. How high can you go?</p><a href="skyjump.html" target="_blank" class="action-button">Play Sky Jumper</a></div></div>
+                <div class="game-card gsap-card"><div class="card-content"><h3>Car Crash Aviator</h3><p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p><a href="car-crash-aviator_Version2.html" target="_blank" class="action-button">Play Car Crash Aviator</a></div></div>
+                <div class="game-card gsap-card"><div class="card-content"><h3>Red Comet Aviator</h3><p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p><a href="Avaitorr.html" target="_blank" class="action-button">Play Red Comet Aviator</a></div></div>
             </div>
         </section>
 
@@ -360,16 +287,13 @@
             <p>Interested in collaborating or have a question? Feel free to reach out!</p>
             <p>Email: <a href="mailto:gmkaifkaifu@gmail.com">gmkaifkaifu@gmail.com</a></p>
             <div style="margin-top:30px;">
-              <a href="https://github.com/GMKAIFU" target="_blank" aria-label="GitHub Profile" style="margin: 0 15px; color: var(--text-secondary); font-size: 2.2rem;"><i class="fab fa-github"></i></a>
-              <a href="https://www.youtube.com/@gmkaif" target="_blank" aria-label="YouTube Channel" style="margin: 0 15px; color: var(--text-secondary); font-size: 2.2rem;"><i class="fab fa-youtube"></i></a>
+              <a href="https://github.com/GMKAIFU" target="_blank" aria-label="GitHub Profile" style="margin: 0 15px; color: var(--text-secondary); font-size: 2.2rem; transition: color 0.3s ease;"><i class="fab fa-github"></i></a>
+              <a href="https://www.youtube.com/@gmkaif" target="_blank" aria-label="YouTube Channel" style="margin: 0 15px; color: var(--text-secondary); font-size: 2.2rem; transition: color 0.3s ease;"><i class="fab fa-youtube"></i></a>
             </div>
           </div>
         </section>
       </div>
-
-      <footer>
-        &copy; 2025 Kaifu | Innovating with AI
-      </footer>
+      <footer>&copy; 2025 Kaifu | Innovating with AI</footer>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -378,75 +302,48 @@
     document.addEventListener('DOMContentLoaded', () => {
         gsap.registerPlugin(ScrollTrigger);
 
-        const body = document.body;
-        const sections = gsap.utils.toArray('section.content-section');
+        const bodyStyle = document.getElementById('background-canvas').style;
 
-        // --- DYNAMIC BACKGROUND MORPHING ---
-        const bgColors = {
-            about: { c1: '#0D1224', c2: '#121A3A', c3: '#182848' },
-            llm:   { c1: '#0F1035', c2: '#2F0F3D', c3: '#182848' },
-            projects: { c1: '#22092C', c2: '#52057B', c3: '#892CDC' },
-            games: { c1: '#00224D', c2: '#0056b3', c3: '#54086B' },
-            contact: { c1: '#0D1224', c2: '#121A3A', c3: '#221D4B' }
-        };
-
-        sections.forEach(section => {
-            const sectionID = section.id;
-            const colors = bgColors[sectionID];
-            if (colors) {
-                ScrollTrigger.create({
-                    trigger: section,
-                    start: 'top 50%',
-                    end: 'bottom 50%',
-                    onEnter: () => gsap.to(body.style, {
-                        '--bg-color-1': colors.c1,
-                        '--bg-color-2': colors.c2,
-                        '--bg-color-3': colors.c3,
-                        duration: 1.5,
-                        ease: 'sine.inOut'
-                    }),
-                    onEnterBack: () => gsap.to(body.style, {
-                        '--bg-color-1': colors.c1,
-                        '--bg-color-2': colors.c2,
-                        '--bg-color-3': colors.c3,
-                        duration: 1.5,
-                        ease: 'sine.inOut'
-                    })
-                });
+        // --- CONTINUOUS BACKGROUND MORPHING ---
+        // A single timeline that scrubs through the whole page
+        const bgTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: document.body,
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 1.5 // Smoothly scrub through the animation
             }
         });
 
-        // --- HEADER & ELEMENT REVEALS ---
+        // Add tweens for each section to the master timeline
+        // These will now blend into each other seamlessly.
+        bgTimeline
+            .to(bodyStyle, { '--grad-x': '80%', '--grad-y': '20%', '--c1': '#0D1224', '--c2': '#121A3A', '--c3': '#182848' }, '#about')
+            .to(bodyStyle, { '--grad-x': '20%', '--grad-y': '80%', '--c1': '#0F1035', '--c2': '#2F0F3D', '--c3': '#182848' }, '#llm-section')
+            .to(bodyStyle, { '--grad-x': '90%', '--grad-y': '90%', '--c1': '#22092C', '--c2': '#52057B', '--c3': 'purple' }, '#projects')
+            .to(bodyStyle, { '--grad-x': '10%', '--grad-y': '10%', '--c1': '#00224D', '--c2': '#0056b3', '--c3': '#54086B' }, '#games')
+            .to(bodyStyle, { '--grad-x': '50%', '--grad-y': '50%', '--c1': '#0D1224', '--c2': '#121A3A', '--c3': '#221D4B' }, '#contact');
+
+        // --- ELEMENT REVEALS ---
         gsap.from('.gsap-reveal-header', {
-            opacity: 0,
-            y: 50,
-            duration: 1,
-            stagger: 0.2,
-            ease: 'power3.out',
-            delay: 0.2
+            opacity: 0, y: 50, duration: 1, stagger: 0.2, ease: 'power3.out', delay: 0.2
         });
         
-        // General Section & Element Reveals with Parallax
         gsap.utils.toArray('.gsap-reveal').forEach(elem => {
-            gsap.fromTo(elem, {
+            gsap.from(elem, {
                 opacity: 0,
-                y: 100 // Start further down
-            }, {
-                opacity: 1,
-                y: 0,
+                y: 75,
                 duration: 1,
                 ease: 'power3.out',
                 scrollTrigger: {
                     trigger: elem,
-                    start: 'top 85%',
-                    end: 'bottom 20%',
-                    scrub: 1, // Add parallax scrub effect
-                    onEnter: () => elem.closest('section')?.classList.add('is-visible'), // For h2 underline
+                    start: 'top 90%',
+                    toggleActions: 'play none none none',
+                    onEnter: () => elem.closest('section')?.classList.add('is-visible'),
                 }
             });
         });
 
-        // --- CARD REVEAL ANIMATION ---
         gsap.utils.toArray('.gsap-card').forEach(card => {
             gsap.from(card, {
                 scrollTrigger: {
@@ -454,16 +351,12 @@
                     start: 'top 90%',
                     toggleActions: 'play none none none'
                 },
-                opacity: 0,
-                y: 60,
-                rotateZ: -3,
-                duration: 0.8,
-                ease: 'power3.out'
+                opacity: 0, y: 60, rotateZ: -3, duration: 0.8, ease: 'power3.out'
             });
         });
 
-        // Active nav link on scroll
-        sections.forEach(section => {
+        // --- ACTIVE NAV LINK ---
+        gsap.utils.toArray('section').forEach(section => {
             ScrollTrigger.create({
                 trigger: section,
                 start: 'top center',
@@ -480,4 +373,4 @@
     });
   </script>
 </body>
-  </html>
+          </html>
