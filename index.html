@@ -4,22 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kaifu | AI Engineer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1213258409915867"
-     crossorigin="anonymous"></script>
   <style>
     :root {
-      --bg-dark: #0d1117; /* GitHub dark background */
-      --bg-medium: #161b22; /* GitHub dark card background */
-      --bg-light: #21262d;
-      --text-primary: #c9d1d9; /* GitHub dark text */
-      --text-secondary: #8b949e; /* GitHub dark secondary text */
-      --accent-primary: #58a6ff; /* GitHub dark primary blue */
-      --accent-secondary: #3FB950; /* GitHub green */
-      --border-color: #30363d;
-      --shadow-color: rgba(0, 0, 0, 0.3);
-      --hover-glow: rgba(88, 166, 255, 0.3);
+      --bg-dark: #0A0A10;
+      --bg-medium: rgba(22, 27, 44, 0.5); /* For Glassmorphism */
+      --text-primary: #EAEBF0;
+      --text-secondary: #A0AEC0;
+      --accent-primary: #00BFFF; /* DeepSkyBlue */
+      --accent-secondary: #9370DB; /* MediumPurple */
+      --border-color: rgba(255, 255, 255, 0.1);
+      --shadow-color: rgba(0, 0, 0, 0.5);
+      --glow-color: rgba(0, 191, 255, 0.5);
     }
 
     * {
@@ -28,18 +25,45 @@
       box-sizing: border-box;
     }
 
+    /* Custom Cursor */
+    .cursor-dot, .cursor-dot-outline {
+        pointer-events: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        border-radius: 50%;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        z-index: 9999;
+    }
+    .cursor-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--accent-primary);
+    }
+    .cursor-dot-outline {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(0, 191, 255, 0.2);
+    }
+    body:hover .cursor-dot, body:hover .cursor-dot-outline {
+        opacity: 1;
+    }
+
     body {
-      font-family: 'Inter', 'Poppins', sans-serif;
+      font-family: 'Inter', 'DM Sans', sans-serif;
       background-color: var(--bg-dark);
       color: var(--text-primary);
       line-height: 1.7;
       overflow-x: hidden;
+      cursor: none; /* Hide default cursor */
     }
 
     .navbar {
-      background-color: rgba(13, 17, 23, 0.85);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background-color: rgba(10, 10, 16, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       padding: 15px 5%;
       position: fixed;
       top: 0;
@@ -50,23 +74,56 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
+      transition: box-shadow 0.3s ease;
     }
 
     .navbar .logo {
-      font-size: 1.5rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.6rem;
       font-weight: 700;
-      color: var(--accent-primary);
+      color: var(--text-primary);
       text-decoration: none;
     }
+    .navbar .logo span {
+        color: var(--accent-primary);
+    }
+
     .navbar .nav-links a {
       color: var(--text-secondary);
       text-decoration: none;
-      margin-left: 25px;
+      margin-left: 30px;
       font-weight: 500;
       transition: color 0.3s ease;
+      position: relative;
     }
     .navbar .nav-links a:hover, .navbar .nav-links a.active {
       color: var(--accent-primary);
+    }
+    .navbar .nav-links a::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: var(--accent-primary);
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+    }
+    .navbar .nav-links a:hover::after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+
+    /* Particle.js Canvas */
+    #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
     }
 
     header {
@@ -77,65 +134,55 @@
       align-items: center;
       text-align: center;
       padding: 120px 20px 60px;
-      background: radial-gradient(circle at top center, rgba(22, 27, 34, 0.8), var(--bg-dark) 70%),
-                  linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-      background-blend-mode: overlay, normal;
-      background-size: 200% 200%;
-      animation: gradientBG 15s ease infinite;
+      position: relative;
+      overflow: hidden;
     }
-    @keyframes gradientBG {
-        0% {background-position: 0% 50%;}
-        50% {background-position: 100% 50%;}
-        100% {background-position: 0% 50%;}
+
+    header .header-content {
+        position: relative;
+        z-index: 2;
     }
 
     header h1 {
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5rem);
       font-weight: 700;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       color: #fff;
-      overflow: hidden;
+      text-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
     header h1 .char {
         display: inline-block;
         opacity: 0;
-        transform: translateY(50px);
+        transform: translateY(50px) scale(0.5);
     }
 
     header p.subtitle {
       font-size: clamp(1rem, 2.5vw, 1.5rem);
       color: var(--text-secondary);
-      max-width: 600px;
-      opacity: 0;
-      transform: translateY(30px);
+      max-width: 650px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
     .container {
       max-width: 1100px;
       margin: auto;
       padding: 60px 20px;
+      position: relative;
+      z-index: 2;
     }
 
     section {
-      margin-bottom: 80px;
-      opacity: 0;
-      transform: translateY(50px);
-    }
-    
-    #llm-section {
-        background-color: var(--bg-medium);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0 4px 15px var(--shadow-color);
+      margin-bottom: 100px;
     }
 
     h2 {
-      font-size: clamp(1.8rem, 4vw, 2.5rem);
-      font-weight: 600;
-      margin-bottom: 30px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 40px;
       position: relative;
-      padding-bottom: 10px;
+      padding-bottom: 15px;
       color: var(--text-primary);
     }
     h2::after {
@@ -143,100 +190,107 @@
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 50px;
+      width: 60px;
       height: 4px;
-      background-color: var(--accent-primary);
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
       border-radius: 2px;
       transform: scaleX(0);
       transform-origin: left;
-      transition: transform 0.5s ease-out;
     }
-    section.is-visible h2::after {
-        transform: scaleX(1);
-    }
-
+    
     .about-content p {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         color: var(--text-secondary);
         max-width: 800px;
     }
 
     .projects {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 35px;
     }
-
+    
     .project-card, .game-card {
-      background: var(--bg-medium);
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      padding: 25px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 15px var(--shadow-color);
-      opacity: 0;
-      transform: translateY(30px);
+        background: var(--bg-medium);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        padding: 30px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 8px 30px var(--shadow-color);
+        will-change: transform;
+        position: relative;
+        overflow: hidden;
     }
 
-    .project-card:hover, .game-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 10px 30px var(--shadow-color), 0 0 15px var(--hover-glow);
-      border-color: var(--accent-primary);
+    /* Spotlight effect for cards */
+    .project-card::before, .game-card::before {
+        content: '';
+        position: absolute;
+        left: var(--x, 50%);
+        top: var(--y, 50%);
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle, var(--glow-color) 0%, transparent 50%);
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+
+    .project-card:hover::before, .game-card:hover::before {
+        opacity: 1;
     }
 
     .project-card h3, .game-card h3 {
-      font-size: 1.5rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.6rem;
       font-weight: 600;
       color: var(--accent-primary);
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .project-card p, .game-card p {
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: var(--text-secondary);
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
-    
-    .infographic-button {
+
+    .action-button {
       display: inline-block;
-      background: var(--accent-primary);
-      color: var(--bg-dark);
-      padding: 12px 25px;
+      background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+      color: #fff;
+      padding: 14px 30px;
       border-radius: 8px;
       text-decoration: none;
       font-weight: 600;
-      transition: background 0.3s ease, transform 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-family: 'DM Sans', sans-serif;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       border: none;
-      cursor: pointer;
-      font-size: 1rem;
+      cursor: none;
+    }
+
+    .action-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px var(--glow-color);
     }
     
-    .infographic-button:hover {
-      background: var(--accent-secondary);
-      transform: translateY(-3px);
-    }
-
-    .game-button {
-      display: inline-block;
-      background: var(--accent-primary);
-      color: var(--bg-dark);
-      padding: 12px 25px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.3s ease, transform 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .game-button:hover {
-      background: var(--accent-secondary);
-      transform: translateY(-3px);
+    #llm-section {
+        background: var(--bg-medium);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 8px 30px var(--shadow-color);
+        text-align: center;
     }
 
     .contact-info p {
         margin-bottom: 15px;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
     }
     .contact-info p a {
         color: var(--accent-primary);
@@ -247,54 +301,53 @@
         text-decoration: underline;
     }
     .contact-icons {
-        margin-top: 20px;
+        margin-top: 30px;
     }
     .contact-icons a {
-      margin-right: 20px;
+      margin: 0 15px;
       color: var(--text-secondary);
-      font-size: 2rem;
+      font-size: 2.2rem;
       transition: color 0.3s ease, transform 0.3s ease;
     }
     .contact-icons a:hover {
       color: var(--accent-primary);
-      transform: scale(1.1);
+      transform: scale(1.2) translateY(-5px);
     }
 
     footer {
-      background: var(--bg-medium);
+      background: #0A0A10;
       color: var(--text-secondary);
       text-align: center;
-      padding: 30px 20px;
+      padding: 40px 20px;
       border-top: 1px solid var(--border-color);
       margin-top: 60px;
+      position: relative;
+      z-index: 2;
     }
 
     @media (max-width: 768px) {
-        .navbar {
-            padding: 15px 3%;
-        }
         .navbar .nav-links {
             display: none;
-        }
-        header h1 {
-            font-size: 2.2rem;
-        }
-        header p.subtitle {
-            font-size: 1rem;
         }
         .projects {
             grid-template-columns: 1fr;
         }
-        h2 {
-            font-size: 1.6rem;
+        .cursor-dot, .cursor-dot-outline {
+            display: none;
+        }
+        body {
+            cursor: auto;
         }
     }
   </style>
 </head>
 <body>
+  
+  <div class="cursor-dot"></div>
+  <div class="cursor-dot-outline"></div>
 
   <nav class="navbar">
-    <a href="#" class="logo">KAIFU</a>
+    <a href="#" class="logo">KAIFU<span>.AI</span></a>
     <div class="nav-links">
       <a href="#about">About</a>
       <a href="#projects">Projects</a>
@@ -304,49 +357,45 @@
   </nav>
 
   <header id="home">
-    <h1>Hi, I'm Kaifu</h1>
-    <p class="subtitle">AI Engineer | Innovator | Creator | Turning Ideas into Intelligent Solutions</p>
+    <div id="particles-js"></div>
+    <div class="header-content">
+      <h1>Hi, I'm Kaifu</h1>
+      <p class="subtitle gsap-reveal">AI Engineer | Innovator | Creator | Turning Ideas into Intelligent Solutions</p>
+    </div>
   </header>
 
   <div class="container">
     <section id="about" class="content-section">
-      <h2>About Me</h2>
-      <div class="about-content">
+      <h2 class="gsap-reveal">About Me</h2>
+      <div class="about-content gsap-reveal">
         <p>I’m an AI engineer passionate about solving real-world problems using machine learning, computer vision, and deep learning. I create innovative systems, and love blending creativity with intelligence to build the future. My journey in AI is driven by a curiosity to explore the unknown and a desire to make a tangible impact.</p>
       </div>
     </section>
 
-    <section id="llm-section" class="content-section">
+    <section id="llm-section" class="content-section gsap-reveal">
         <h2>LLM Research Infographics</h2>
-        <p style="color: var(--text-secondary); margin-bottom: 25px;">A visual guide to understanding the fundamentals of Large Language Models, their architecture, and applications.</p>
-        <button onclick="window.open('LLMinfograph.html', '_blank')" class="infographic-button">
+        <p style="color: var(--text-secondary); margin-bottom: 25px; max-width: 600px; margin-left: auto; margin-right: auto;">A visual guide to understanding the fundamentals of Large Language Models, their architecture, and applications.</p>
+        <button onclick="window.open('LLMinfograph.html', '_blank')" class="action-button">
             Open Infographic
         </button>
-        <div style="margin-top: 25px; padding: 20px; background-color: var(--bg-light); border-left: 4px solid var(--accent-secondary); border-radius: 4px;">
-            <strong style="color: var(--text-primary);">Audio Explanation:</strong><br>
-            <audio controls style="width: 100%; margin-top: 10px;">
-                <source src="your-audio-link.mp3" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
-        </div>
     </section>
 
     <section id="projects" class="content-section">
-      <h2>My AI Projects & Research</h2>
+      <h2 class="gsap-reveal">My AI Projects & Research</h2>
       <div class="projects">
-        <div class="project-card">
+        <div class="project-card gsap-card">
           <h3>Vehicle Number Plate Detection</h3>
           <p>Utilizing OpenCV & Haar Cascades for robust detection and extraction of vehicle number plates with high accuracy, even in challenging conditions.</p>
         </div>
-        <div class="project-card">
+        <div class="project-card gsap-card">
           <h3>Cricket Win Predictor</h3>
           <p>A real-time T20 match analysis tool predicting win probabilities based on dynamic game data, offering insights for fans and analysts.</p>
         </div>
-        <div class="project-card">
+        <div class="project-card gsap-card">
           <h3>AI Shorts Generator</h3>
           <p>An automated system that crafts engaging, AI-powered short videos featuring animals and emotional cues, tailored for YouTube Shorts.</p>
         </div>
-        <div class="project-card">
+        <div class="project-card gsap-card">
           <h3>Stock Trend Predictor</h3>
           <p>Developing a model using LSTMs and time-series analysis to forecast stock market trends, aiding in investment decisions.</p>
         </div>
@@ -354,28 +403,29 @@
     </section>
 
     <section id="games" class="content-section">
-        <h2>My Games</h2>
+        <h2 class="gsap-reveal">My Games</h2>
         <div class="projects">
-            <div class="game-card">
+            <div class="game-card gsap-card">
                 <h3>Sky Jumper</h3>
                 <p>Navigate treacherous platforms and soar to new heights in this addictive jumping adventure. How high can you go?</p>
-                <a href="skyjump.html" target="_blank" class="game-button">Play Sky Jumper</a>
+                <a href="skyjump.html" target="_blank" class="action-button">Play Sky Jumper</a>
             </div>
-            <div class="game-card">
+            <div class="game-card gsap-card">
                 <h3>Car Crash Aviator</h3>
                 <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
-                <a href="car-crash-aviator_Version2.html" target="_blank" class="game-button">Play Car Crash Aviator</a>
+                <a href="car-crash-aviator_Version2.html" target="_blank" class="action-button">Play Car Crash Aviator</a>
             </div>
-          <div class="game-card">
-                <h3>Red Comet Avaitor</h3>
+            <div class="game-card gsap-card">
+                <h3>Red Comet Aviator</h3>
                 <p>Test your reflexes! Dodge obstacles and survive the chaotic skies in this thrilling aviator challenge. Aim for the high score!</p>
-                <a href="Avaitorr.html" target="_blank" class="game-button">Play Red Comet  Aviator</a>
+                <a href="Avaitorr.html" target="_blank" class="action-button">Play Red Comet Aviator</a>
+            </div>
         </div>
     </section>
 
     <section id="contact" class="content-section">
-      <h2>Get In Touch</h2>
-      <div class="contact-info">
+      <h2 class="gsap-reveal">Get In Touch</h2>
+      <div class="contact-info gsap-reveal">
         <p>Interested in collaborating or have a question? Feel free to reach out!</p>
         <p>Email: <a href="mailto:gmkaifkaifu@gmail.com">gmkaifkaifu@gmail.com</a></p>
         <div class="contact-icons">
@@ -390,140 +440,169 @@
     &copy; <span id="currentYear"></span> Kaifu | Innovating with AI
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/TextPlugin.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      gsap.registerPlugin(ScrollTrigger, TextPlugin, ScrollToPlugin);
+        gsap.registerPlugin(ScrollTrigger);
 
-      document.getElementById('currentYear').textContent = new Date().getFullYear();
+        // --- Custom Cursor ---
+        const cursorDot = document.querySelector(".cursor-dot");
+        const cursorDotOutline = document.querySelector(".cursor-dot-outline");
+        window.addEventListener("mousemove", function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            gsap.to(cursorDotOutline, {
+                duration: 0.4,
+                left: `${posX}px`,
+                top: `${posY}px`,
+            });
+        });
 
-      const mainHeading = document.querySelector('header h1');
-      const originalText = mainHeading.textContent;
-      mainHeading.textContent = ''; 
+        // --- Particle.js Background ---
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#8b949e", "opacity": 0.4, "width": 1 },
+                "move": { "enable": true, "speed": 1, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 1 } }, "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 }, "repulse": { "distance": 200, "duration": 0.4 }, "push": { "particles_nb": 4 }, "remove": { "particles_nb": 2 } }
+            },
+            "retina_detect": true
+        });
 
-      originalText.split('').forEach(char => {
-          const span = document.createElement('span');
-          span.className = 'char';
-          span.textContent = char === ' ' ? '\u00A0' : char;
-          mainHeading.appendChild(span);
-      });
-      
-      gsap.to(".char", {
-        opacity: 1,
-        y: 0,
-        stagger: 0.05,
-        duration: 0.8,
-        ease: "power2.out",
-        delay: 0.5
-      });
-
-      gsap.to("header p.subtitle", {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: "power2.out",
-        delay: 1.2
-      });
-
-      gsap.utils.toArray('section.content-section').forEach(section => {
-        gsap.fromTo(section,
-          { opacity: 0, y: 70 },
-          {
+        // --- Header Animation ---
+        const mainHeading = document.querySelector('header h1');
+        const originalText = mainHeading.textContent;
+        mainHeading.textContent = ''; 
+        originalText.split('').forEach(char => {
+            const span = document.createElement('span');
+            span.className = 'char';
+            span.textContent = char === ' ' ? '\u00A0' : char;
+            mainHeading.appendChild(span);
+        });
+        gsap.to(".char", {
             opacity: 1,
             y: 0,
-            duration: 1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 80%',
-              toggleActions: 'play none none none',
-            }
-          }
-        );
+            scale: 1,
+            stagger: 0.04,
+            duration: 0.8,
+            ease: "power3.out",
+            delay: 0.5
+        });
 
-        const h2 = section.querySelector('h2');
-        if (h2) {
+        // --- General Section & Element Reveals ---
+        gsap.utils.toArray('.gsap-reveal').forEach(elem => {
+            gsap.fromTo(elem, {
+                opacity: 0,
+                y: 50
+            }, {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: elem,
+                    start: 'top 85%',
+                    toggleActions: 'play none none none'
+                }
+            });
+        });
+
+        // Animate H2 underlines
+        gsap.utils.toArray('h2.gsap-reveal').forEach(h2 => {
             gsap.to(h2, {
                 scrollTrigger: {
                     trigger: h2,
                     start: "top 85%",
-                    toggleClass: {targets: section, className: "is-visible"},
-                    once: true,
-                }
+                    onEnter: () => h2.style.setProperty('--after-transform', 'scaleX(1)'),
+                },
+                "--after-transform": "scaleX(1)",
+                duration: 0.8,
+                ease: "power3.out"
             });
-        }
-      });
-
-      gsap.utils.toArray('.project-card, .game-card').forEach(card => {
-        gsap.fromTo(card,
-          { opacity: 0, y: 50, scale: 0.95 },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.7,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 90%',
-              toggleActions: 'play none none none',
-            }
-          }
-        );
-      });
-      
-      const navLinks = document.querySelectorAll('.nav-links a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          const targetId = this.getAttribute('href');
-          const targetElement = document.querySelector(targetId);
-          if (targetElement) {
-            gsap.to(window, {
-              duration: 1,
-              scrollTo: { y: targetElement, offsetY: 70 }
+             gsap.to(h2.style, {
+                "--after-transform": "scaleX(1)",
+                duration: 0.8,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: h2,
+                    start: "top 85%",
+                },
             });
-          }
-        });
-      });
 
-      gsap.utils.toArray('section.content-section').forEach(section => {
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top center",
-          end: "bottom center",
-          onToggle: self => {
-            const link = document.querySelector(`.nav-links a[href="#${section.id}"]`);
-            if (link) {
-              if (self.isActive) {
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-              } else {
-                link.classList.remove('active');
-              }
-            }
-          }
+             const after = h2.querySelector("::after");
+              gsap.to(after, {
+                scaleX: 1,
+                duration: 0.8,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: h2,
+                    start: "top 85%",
+                },
+            });
         });
-      });
 
-      const navbar = document.querySelector('.navbar');
-      ScrollTrigger.create({
-          trigger: "body",
-          start: "top top-=100",
-          end: "bottom top",
-          onUpdate: (self) => {
-              if (self.direction === 1 && self.progress > 0) {
-                  gsap.to(navbar, { boxShadow: "0 2px 10px rgba(0,0,0,0.3)", duration: 0.3 });
-              } else if (self.direction === -1 && self.scroll() < 100) {
-                  gsap.to(navbar, { boxShadow: "none", duration: 0.3 });
-              }
-          }
-      });
+        // --- Card Animations ---
+        const cards = gsap.utils.toArray('.gsap-card');
+        cards.forEach(card => {
+            // 3D Tilt Effect
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20; // Slower rotation
+                const rotateY = -(x - centerX) / 20;
+                gsap.to(card, {
+                    duration: 0.5,
+                    transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`,
+                    ease: "power2.out"
+                });
+
+                // Spotlight effect
+                card.style.setProperty('--x', `${x}px`);
+                card.style.setProperty('--y', `${y}px`);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    duration: 0.5,
+                    transform: 'perspective(1000px) rotateX(0) rotateY(0) scale(1)',
+                    ease: "power2.out"
+                });
+            });
+            
+            // Scroll Reveal for Cards
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 60,
+                rotateZ: -5,
+                duration: 0.8,
+                ease: 'power3.out'
+            });
+        });
+
+        // --- Footer Year ---
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
     });
   </script>
 </body>
-                  </html>
+    </html>
