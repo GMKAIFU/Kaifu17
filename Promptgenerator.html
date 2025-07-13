@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide-react@0.378.0/dist/umd/lucide-react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-active {
+            background-color: #4f46e5;
+            color: white;
+        }
+        .tab-inactive {
+            background-color: #e0e7ff;
+            color: #4338ca;
+        }
+        .prose h1 { font-size: 1.875rem; font-weight: 700; margin-bottom: 1rem; }
+        .prose h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; margin-top: 1.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem;}
+        .prose h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; margin-top: 1.25rem;}
+        .prose p { margin-bottom: 1rem; line-height: 1.6; }
+        .prose strong { font-weight: 600; }
+        .prose ul { list-style-position: inside; margin-left: 1rem; margin-bottom: 1rem; }
+        .prose li { margin-bottom: 0.5rem; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 antialiased">
+
+    <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800">Prompt Architect</h1>
+            <p class="text-lg text-gray-600 mt-2">Your AI-powered partner for crafting masterwork prompts.</p>
+        </header>
+
+        <!-- Tab Controls -->
+        <div class="flex justify-center mb-8 bg-indigo-100 rounded-lg p-1.5 max-w-md mx-auto">
+            <button id="image-tab" class="tab-button w-1/2 py-2 px-4 rounded-md text-sm md:text-base font-semibold transition-all duration-300">
+                Image Generator
+            </button>
+            <button id="video-tab" class="tab-button w-1/2 py-2 px-4 rounded-md text-sm md:text-base font-semibold transition-all duration-300">
+                Video Generator
+            </button>
+        </div>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Image Generator Panel -->
+            <div id="image-generator" class="generator-panel">
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-1">Image Prompt Generator</h2>
+                    <p class="text-gray-500 mb-6">Describe your visual idea, and we'll architect a detailed prompt for it.</p>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="image-idea" class="block text-sm font-medium text-gray-700 mb-2">Your Idea:</label>
+                            <textarea id="image-idea" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="e.g., A lone astronaut discovering a glowing forest on a distant moon."></textarea>
+                        </div>
+                        <button id="generate-image-prompt" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-102 flex items-center justify-center">
+                            <span class="mr-2">Architect Prompt</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wand-sparkles"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2 18.16V22h3.84l14.8-14.8a1.21 1.21 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Generator Panel -->
+            <div id="video-generator" class="generator-panel hidden">
+                 <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-1">Advanced Video Prompt Generator</h2>
+                    <p class="text-gray-500 mb-6">Let's build a cinematic masterpiece, scene by scene. Start with your core concept.</p>
+                    
+                    <div id="video-step-1" class="space-y-6">
+                        <div>
+                            <label for="video-idea" class="block text-sm font-medium text-gray-700 mb-2">Your Video Concept:</label>
+                            <textarea id="video-idea" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="e.g., A short animated film about a shy robot who learns to dance."></textarea>
+                        </div>
+                        <button id="start-video-process" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform hover:scale-102 flex items-center justify-center">
+                           <span class="mr-2">Start Clarification</span>
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bot"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                        </button>
+                    </div>
+
+                    <div id="video-step-2" class="hidden space-y-6">
+                        <h3 class="text-xl font-bold text-gray-700">Let's Refine Your Idea</h3>
+                        <p class="text-gray-600">Answer these questions to help create a more detailed and accurate prompt.</p>
+                        <div id="questions-container" class="space-y-4"></div>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <div class="flex-1">
+                                <label for="char-count" class="block text-sm font-medium text-gray-700 mb-2">Characters per Scene (1-1000):</label>
+                                <input type="number" id="char-count" min="1" max="1000" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Default: 2000+ (Max Detail)">
+                            </div>
+                            <div class="flex-1 flex flex-col sm:flex-row gap-4 sm:items-end">
+                                <button id="generate-scene-prompt" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition flex items-center justify-center">
+                                    <span class="mr-2">Generate Scene-by-Scene</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-film"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M21 7.5h-4"/><path d="M21 16.5h-4"/></svg>
+                                </button>
+                                <button id="generate-full-prompt" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition flex items-center justify-center">
+                                    <span class="mr-2">Generate Full Prompt</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Area -->
+            <div id="output-container" class="mt-8 bg-white p-6 md:p-8 rounded-2xl shadow-lg hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800">Generated Prompt</h3>
+                    <button id="copy-button" class="bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition flex items-center">
+                        <span id="copy-text">Copy</span>
+                        <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy ml-2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                        <svg id="check-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check hidden ml-2 text-green-500"><path d="M20 6 9 17l-5-5"/></svg>
+                    </button>
+                </div>
+                <div id="loader" class="flex justify-center items-center h-40 hidden">
+                    <div class="loader"></div>
+                </div>
+                <div id="prompt-output" class="prose max-w-none text-gray-700"></div>
+            </div>
+             <!-- Message Modal -->
+            <div id="message-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+                <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+                    <p id="modal-message" class="text-lg text-gray-700 mb-4"></p>
+                    <button id="modal-close-button" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700">OK</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // --- DOM Element Selection ---
+        const imageTab = document.getElementById('image-tab');
+        const videoTab = document.getElementById('video-tab');
+        const imageGeneratorPanel = document.getElementById('image-generator');
+        const videoGeneratorPanel = document.getElementById('video-generator');
+        
+        const generateImageBtn = document.getElementById('generate-image-prompt');
+        const imageIdeaInput = document.getElementById('image-idea');
+        
+        const startVideoBtn = document.getElementById('start-video-process');
+        const videoIdeaInput = document.getElementById('video-idea');
+        const videoStep1 = document.getElementById('video-step-1');
+        const videoStep2 = document.getElementById('video-step-2');
+        const questionsContainer = document.getElementById('questions-container');
+        const charCountInput = document.getElementById('char-count');
+        const generateSceneBtn = document.getElementById('generate-scene-prompt');
+        const generateFullBtn = document.getElementById('generate-full-prompt');
+
+        const outputContainer = document.getElementById('output-container');
+        const loader = document.getElementById('loader');
+        const promptOutput = document.getElementById('prompt-output');
+        const copyButton = document.getElementById('copy-button');
+        const copyText = document.getElementById('copy-text');
+        const copyIcon = document.getElementById('copy-icon');
+        const checkIcon = document.getElementById('check-icon');
+
+        const modal = document.getElementById('message-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseBtn = document.getElementById('modal-close-button');
+
+
+        let userAnswers = {};
+        let videoQuestions = [];
+
+        // --- Tab Switching Logic ---
+        function setActiveTab(tab) {
+            if (tab === 'image') {
+                imageTab.classList.add('tab-active');
+                imageTab.classList.remove('tab-inactive');
+                videoTab.classList.add('tab-inactive');
+                videoTab.classList.remove('tab-active');
+                imageGeneratorPanel.classList.remove('hidden');
+                videoGeneratorPanel.classList.add('hidden');
+            } else {
+                videoTab.classList.add('tab-active');
+                videoTab.classList.remove('tab-inactive');
+                imageTab.classList.add('tab-inactive');
+                imageTab.classList.remove('tab-active');
+                videoGeneratorPanel.classList.remove('hidden');
+                imageGeneratorPanel.classList.add('hidden');
+            }
+            // Reset UI
+            outputContainer.classList.add('hidden');
+            promptOutput.innerHTML = '';
+            videoStep1.classList.remove('hidden');
+            videoStep2.classList.add('hidden');
+            questionsContainer.innerHTML = '';
+        }
+
+        imageTab.addEventListener('click', () => setActiveTab('image'));
+        videoTab.addEventListener('click', () => setActiveTab('video'));
+        
+        // --- Modal Logic ---
+        function showModal(message) {
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+        }
+        modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
+
+        // --- Gemini API Call Function ---
+        async function callGemini(prompt, isJson = false) {
+            showLoader();
+            const apiKey = ""; // API key is handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                generationConfig: {}
+            };
+
+            if (isJson) {
+                payload.generationConfig.responseMimeType = "application/json";
+                payload.generationConfig.responseSchema = {
+                    type: "OBJECT",
+                    properties: {
+                        questions: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    question_text: { type: "STRING" },
+                                    answer_options: { type: "ARRAY", items: { type: "STRING" } }
+                                },
+                                required: ["question_text"]
+                            }
+                        }
+                    }
+                };
+            }
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    throw new Error(`API Error: ${response.status} ${response.statusText}. Body: ${errorBody}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    return isJson ? JSON.parse(text) : text;
+                } else {
+                    console.error("Unexpected API response structure:", result);
+                    if (result.promptFeedback && result.promptFeedback.blockReason) {
+                         throw new Error(`Request blocked: ${result.promptFeedback.blockReason}. ${result.promptFeedback.blockReasonMessage || ''}`);
+                    }
+                    throw new Error("The AI model returned an empty or invalid response.");
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                showModal(`An error occurred: ${error.message}`);
+                return null;
+            } finally {
+                hideLoader();
+            }
+        }
+
+        // --- UI Helper Functions ---
+        function showLoader() {
+            outputContainer.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            promptOutput.classList.add('hidden');
+        }
+
+        function hideLoader() {
+            loader.classList.add('hidden');
+            promptOutput.classList.remove('hidden');
+        }
+
+        function displayOutput(content) {
+            outputContainer.classList.remove('hidden');
+            promptOutput.innerHTML = marked.parse(content);
+        }
+
+        // --- Image Prompt Generation ---
+        generateImageBtn.addEventListener('click', async () => {
+            const idea = imageIdeaInput.value;
+            if (!idea.trim()) {
+                showModal("Please enter your idea for the image.");
+                return;
+            }
+
+            const prompt = `
+                You are an expert prompt engineer for text-to-image AI models. A user has provided an idea. Your task is to expand this idea into a detailed, structured, and highly effective prompt.
+
+                User's Idea: "${idea}"
+
+                Generate a prompt with the following structure, using Markdown for formatting. Be creative and descriptive for each section.
+
+                ### 🎨 Style
+                Describe the artistic style (e.g., photorealistic, digital painting, anime, 3D render, impressionistic).
+
+                ### 🎭 Subject
+                Describe the main subject(s) in detail, including appearance, clothing, expression, and actions.
+
+                ### 💡 Lighting
+                Describe the lighting conditions (e.g., cinematic lighting, soft morning light, dramatic shadows, neon glow).
+
+                ### 🖼️ Composition
+                Describe the camera shot and angle (e.g., wide-angle shot, close-up, rule of thirds, from a low angle).
+
+                ### 🌈 Color Palette
+                Describe the dominant colors and overall mood (e.g., vibrant and saturated, muted and desaturated, monochromatic blue tones).
+
+                ###  배경 (Background)
+                Describe the background and environment in detail.
+
+                ### ✨ Details
+                Add extra keywords and details that will enhance the final image (e.g., "highly detailed", "4K", "sharp focus", "intricate details").
+            `;
+
+            const result = await callGemini(prompt);
+            if (result) {
+                displayOutput(result);
+            }
+        });
+
+        // --- Video Prompt Generation ---
+
+        // Step 1: Start the process, get questions
+        startVideoBtn.addEventListener('click', async () => {
+            const idea = videoIdeaInput.value;
+            if (!idea.trim()) {
+                showModal("Please enter your video concept to begin.");
+                return;
+            }
+
+            const prompt = `
+                You are a helpful assistant acting as a film director's creative partner. A user has a concept for a video. Your task is to generate exactly 3 insightful, clarifying questions to help flesh out the idea. These questions should cover key aspects like character, setting, tone, or plot. For each question, provide 3-4 diverse and interesting multiple-choice options, but also allow for a custom answer.
+
+                User's Video Concept: "${idea}"
+
+                Return the output ONLY in the specified JSON format. Do not include any other text or markdown.
+            `;
+
+            const result = await callGemini(prompt, true);
+            if (result && result.questions) {
+                videoQuestions = result.questions;
+                displayQuestions(videoQuestions);
+                videoStep1.classList.add('hidden');
+                videoStep2.classList.remove('hidden');
+                outputContainer.classList.add('hidden');
+            }
+        });
+        
+        // Display the generated questions
+        function displayQuestions(questions) {
+            questionsContainer.innerHTML = '';
+            questions.forEach((q, index) => {
+                const questionId = `question-${index}`;
+                const questionBlock = document.createElement('div');
+                questionBlock.className = 'p-4 border border-gray-200 rounded-lg bg-gray-50';
+                
+                let optionsHtml = '';
+                if (q.answer_options && q.answer_options.length > 0) {
+                    optionsHtml = q.answer_options.map((opt, optIndex) => `
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="${questionId}" value="${opt}" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                            <span class="text-gray-700">${opt}</span>
+                        </label>
+                    `).join('');
+                }
+
+                questionBlock.innerHTML = `
+                    <p class="font-semibold text-gray-800 mb-3">${index + 1}. ${q.question_text}</p>
+                    <div class="space-y-2">
+                        ${optionsHtml}
+                        <div class="flex items-center space-x-3">
+                           <input type="radio" name="${questionId}" value="custom" class="form-radio h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                           <input type="text" id="${questionId}-custom" class="flex-grow p-2 border border-gray-300 rounded-md text-sm" placeholder="Or type your own answer...">
+                        </div>
+                    </div>
+                `;
+                questionsContainer.appendChild(questionBlock);
+
+                // Add event listener to select radio when typing in custom field
+                const customInput = document.getElementById(`${questionId}-custom`);
+                customInput.addEventListener('focus', () => {
+                    questionBlock.querySelector(`input[name="${questionId}"][value="custom"]`).checked = true;
+                });
+            });
+        }
+        
+        function collectAnswers() {
+            userAnswers = {};
+            videoQuestions.forEach((q, index) => {
+                const questionId = `question-${index}`;
+                const selectedOption = document.querySelector(`input[name="${questionId}"]:checked`);
+                if (selectedOption) {
+                    if (selectedOption.value === 'custom') {
+                        userAnswers[q.question_text] = document.getElementById(`${questionId}-custom`).value;
+                    } else {
+                        userAnswers[q.question_text] = selectedOption.value;
+                    }
+                }
+            });
+            return Object.keys(userAnswers).length === videoQuestions.length;
+        }
+
+        // Generate the final video prompt
+        async function generateVideoPrompt(isSceneByScene) {
+            if (!collectAnswers()) {
+                showModal("Please answer all questions before generating the prompt.");
+                return;
+            }
+
+            const idea = videoIdeaInput.value;
+            const charCount = charCountInput.value || '2000+';
+            const answersText = Object.entries(userAnswers).map(([q, a]) => `- ${q}\n  - Answer: ${a}`).join('\n');
+            const generationMode = isSceneByScene ? 'scene-by-scene' : 'full narrative';
+            
+            const prompt = `
+                You are a world-class screenwriter and prompt engineer. Your task is to generate a highly detailed and structured video prompt based on the user's concept and their answers to clarifying questions.
+
+                **Core Concept:**
+                ${idea}
+
+                **User's Refinements:**
+                ${answersText}
+
+                **Generation Mode:** ${generationMode}
+                **Target Detail Level (Characters per scene):** ${charCount}
+
+                **Instructions:**
+                1.  **Structure:** Break the story into logical scenes.
+                2.  **Consistency:** Ensure characters, locations, and visual styles are consistent across all scenes.
+                3.  **Detail:** For each scene, provide exhaustive detail across ALL of the following 10 categories. Be vivid, cinematic, and precise.
+                4.  **Formatting:** Use Markdown for clear, readable structure. Use H2 (##) for Scene Titles and H3 (###) for the categories.
+
+                **Required Categories for Each Scene:**
+                
+                ### 1. Location / BackgroundBackground
+                Describe the setting in immense detail. What does it look, feel, and smell like? What time of day is it?
+                
+                ### 2. Characters & Appearance
+                Describe the characters in the scene. What are they wearing? What are their expressions? How do they carry themselves? Maintain consistency from previous scenes.
+                
+                ### 3. Key Actions & Events
+                Detail the specific actions taking place. Describe movements, gestures, and the sequence of events precisely.
+                
+                ### 4. Dialogue
+                Write any dialogue for the scene. Ensure it matches the character's personality and the scene's tone. If no dialogue, state "Silent".
+                
+                ### 5. Camera Shots & Angles
+                Be a virtual director. Specify camera shots (e.g., Extreme Close-Up, Wide Shot, Dutch Angle, Dolly Zoom, Crane Shot). Describe camera movement.
+                
+                ### 6. Lighting Style
+                Describe the lighting with professional terminology (e.g., High-key, Low-key, Film Noir contrast, Golden hour softness, harsh fluorescent, bioluminescent glow).
+                
+                ### 7. Visual Style / Aesthetics
+                Define the overall look (e.g., Cyberpunk neon-drenched, Ghibli-esque hand-painted, gritty found-footage, sleek minimalist, Wes Anderson symmetry).
+                
+                ### 8. Sound Design & Music
+                Describe all diegetic and non-diegetic sounds. What ambient noises are present? What is the style of the musical score (e.g., "tense orchestral strings", "upbeat synth-pop", "melancholy piano solo").
+                
+                ### 9. Pacing & Mood
+                Describe the pacing of the scene (e.g., frantic and fast-cut, slow and contemplative, suspenseful build-up). What is the intended emotional mood?
+                
+                ### 10. Character Count Check
+                Internally verify that the description for this scene meets the target character count of ${charCount}. This is a quality check for you.
+
+                Now, generate the complete, detailed prompt.
+            `;
+
+            const result = await callGemini(prompt);
+            if (result) {
+                if (isSceneByScene) {
+                    displayOutput(`## Scene-by-Scene Prompt\n\nHere is your detailed breakdown. You can generate each scene individually with your video tool.\n\n${result}`);
+                } else {
+                    displayOutput(`## Full Narrative Prompt\n\nHere is the complete, unified prompt for your video.\n\n${result}`);
+                }
+            }
+        }
+
+        generateSceneBtn.addEventListener('click', () => generateVideoPrompt(true));
+        generateFullBtn.addEventListener('click', () => generateVideoPrompt(false));
+
+        // --- Copy to Clipboard ---
+        copyButton.addEventListener('click', () => {
+            const textToCopy = promptOutput.innerText;
+            // A fallback for environments where navigator.clipboard is not available (like sandboxed iframes)
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                copyText.textContent = 'Copied!';
+                copyIcon.classList.add('hidden');
+                checkIcon.classList.remove('hidden');
+
+                setTimeout(() => {
+                    copyText.textContent = 'Copy';
+                    copyIcon.classList.remove('hidden');
+                    checkIcon.classList.add('hidden');
+                }, 2000);
+
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showModal('Failed to copy text.');
+            }
+            document.body.removeChild(textArea);
+        });
+
+        // --- Initial Setup ---
+        setActiveTab('image'); // Start on the image tab by default
+
+    </script>
+</body>
+</html>
