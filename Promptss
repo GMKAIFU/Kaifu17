@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Video Prompt Director</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #111827; color: #e5e7eb; }
+        .card { background-color: #1f2937; border: 1px solid #374151; border-radius: 0.75rem; padding: 2rem; margin-bottom: 1.5rem; }
+        .label { display: block; font-weight: 600; margin-bottom: 0.75rem; color: #9ca3af; }
+        .textarea { width: 100%; background-color: #374151; border: 1px solid #4b5563; border-radius: 0.5rem; padding: 0.75rem 1rem; color: #e5e7eb; transition: border-color 0.2s, box-shadow 0.2s; }
+        .textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+        .btn { background-color: #3b82f6; color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: background-color 0.2s; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn:hover { background-color: #2563eb; }
+        .btn:disabled { background-color: #374151; cursor: not-allowed; }
+        .btn-secondary { background-color: #4b5563; }
+        .btn-secondary:hover { background-color: #6b7280; }
+        .btn-danger { background-color: #ef4444; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #10b981; color: white; padding: 10px 20px; border-radius: 7px; z-index: 100; opacity: 0; transition: opacity 0.3s, transform 0.3s; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .radio-group label { background-color: #374151; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; border: 2px solid transparent; }
+        .radio-group input:checked + label { background-color: #3b82f6; border-color: #60a5fa; }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+    </style>
+</head>
+<body class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <div id="main-page">
+            <h1 class="text-3xl sm:text-4xl font-bold text-center mb-2 text-white">Professional Video Prompt Director</h1>
+            <p class="text-center text-gray-400 mb-8">Craft a detailed, structured storyboard with AI assistance.</p>
+
+            <div id="form-container">
+                <div class="card">
+                    <h2 class="text-xl font-bold mb-4 text-white">🎬 Core Idea</h2>
+                    <p class="text-gray-400 mb-4">Provide the main concept. This is the only required field. The AI will flesh out the details.</p>
+                    <textarea id="input-idea" class="textarea" rows="3" placeholder="e.g., A cinematic shot of a futuristic sports car racing through a neon-drenched cyberpunk city at night."></textarea>
+                </div>
+                
+                <div class="card">
+                     <h2 class="text-xl font-bold mb-6 text-white">⚙️ Quick Options</h2>
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                         <div>
+                             <label class="label">Aspect Ratio</label>
+                             <div class="flex gap-4 radio-group">
+                                 <input type="radio" name="aspect-ratio" id="ratio-916" value="9:16" class="sr-only">
+                                 <label for="ratio-916">Vertical (9:16)</label>
+                                 <input type="radio" name="aspect-ratio" id="ratio-169" value="16:9" class="sr-only" checked>
+                                 <label for="ratio-169">Widescreen (16:9)</label>
+                             </div>
+                         </div>
+                         <div>
+                             <label class="label">Video Length</label>
+                             <div class="flex gap-4 radio-group">
+                                 <input type="radio" name="length" id="len-5" value="~5 seconds" class="sr-only">
+                                 <label for="len-5">5s</label>
+                                 <input type="radio" name="length" id="len-10" value="~10 seconds" class="sr-only" checked>
+                                 <label for="len-10">10s</label>
+                                 <input type="radio" name="length" id="len-15" value="~15 seconds" class="sr-only">
+                                 <label for="len-15">15s</label>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+
+                <div class="card">
+                    <button id="toggle-details-btn" class="text-left w-full">
+                        <h2 class="text-xl font-bold text-white flex justify-between items-center">
+                            <span>📝 Detailed Director's Brief (Optional)</span>
+                            <span id="toggle-icon">▶</span>
+                        </h2>
+                        <p class="text-gray-400 mt-2">Expand to override AI choices with your specific directions.</p>
+                    </button>
+                    <div id="detailed-inputs" class="collapsible-content mt-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="input-location" class="label">1. Location / Background</label><textarea id="input-location" class="textarea" rows="3" placeholder="e.g., A dusty, sun-baked street outside a modern gym."></textarea></div>
+                            <div><label for="input-characters" class="label">2. Characters & Appearance</label><textarea id="input-characters" class="textarea" rows="3" placeholder="e.g., A confident, athletic humanoid monkey named Bandar."></textarea></div>
+                            <div><label for="input-actions" class="label">3. Key Actions & Events</label><textarea id="input-actions" class="textarea" rows="3" placeholder="e.g., Bandar vlogging with a selfie stick."></textarea></div>
+                            <div><label for="input-dialogue" class="label">4. Dialogue</label><textarea id="input-dialogue" class="textarea" rows="3" placeholder="e.g., Bandar (in Telugu): 'Go to the gym!' or 'Silent'"></textarea></div>
+                            <div><label for="input-camera" class="label">5. Camera Shots & Angles</label><textarea id="input-camera" class="textarea" rows="3" placeholder="e.g., Low-angle tracking shot, selfie-cam POV."></textarea></div>
+                            <div><label for="input-lighting" class="label">6. Lighting Style</label><textarea id="input-lighting" class="textarea" rows="3" placeholder="e.g., Bright, golden midday sun, rim light effect."></textarea></div>
+                            <div><label for="input-style" class="label">7. Visual Style / Aesthetics</label><textarea id="input-style" class="textarea" rows="3" placeholder="e.g., Vibrant, cinematic, high-quality vlog look."></textarea></div>
+                            <div><label for="input-sound" class="label">8. Sound Design & Music</label><textarea id="input-sound" class="textarea" rows="3" placeholder="e.g., Motivational synth music, ambient street sounds."></textarea></div>
+                            <div class="md:col-span-2"><label for="input-pacing" class="label">9. Pacing & Mood</label><textarea id="input-pacing" class="textarea" rows="3" placeholder="e.g., Pacing is steady and confident. Mood is motivational."></textarea></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="generate-btn" class="btn">Generate Scene 1</button>
+            </div>
+            
+            <div id="saved-prompts-container" class="mt-8"></div>
+        </div>
+
+        <div id="result-page" class="hidden">
+            <div id="result-container" class="mt-8"></div>
+             <div id="loading-indicator" class="hidden text-center mt-8">
+                 <div class="spinner h-8 w-8 text-white mx-auto">
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                 </div>
+                 <p id="loading-text" class="mt-4">Generating your cinematic blueprint...</p>
+             </div>
+        </div>
+        
+        <div id="toast-notification" class="toast"></div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const mainPage = document.getElementById('main-page');
+        const resultPage = document.getElementById('result-page');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultContainer = document.getElementById('result-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const loadingText = document.getElementById('loading-text');
+        const savedPromptsContainer = document.getElementById('saved-prompts-container');
+        const toggleDetailsBtn = document.getElementById('toggle-details-btn');
+        const detailedInputs = document.getElementById('detailed-inputs');
+        const toggleIcon = document.getElementById('toggle-icon');
+
+        let sceneHistory = [];
+
+        // --- Gemini API Call (INSECURE - FOR PERSONAL TESTING ONLY) ---
+        async function callGemini(prompt) {
+            // ⚠️ PASTE YOUR SECRET API KEY HERE ⚠️
+            const apiKey = "YOUR_API_KEY_HERE"; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: prompt }] }] };
+
+             try {
+                 const response = await fetch(apiUrl, {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify(payload)
+                 });
+                 if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                 const result = await response.json();
+                 if (result.candidates && result.candidates[0].content.parts[0].text) {
+                     return result.candidates[0].content.parts[0].text;
+                 }
+                 console.error("API Response Error:", result);
+                 return "Error: Could not parse AI response.";
+             } catch (error) {
+                 console.error("Gemini API Call Failed:", error);
+                 // A common error is a "400" error. This often means the API key is invalid or has restrictions.
+                 if (error.message.includes("400")) {
+                    return `Error: API call failed (400). This could be due to an invalid API key or incorrect restrictions set in your Google Cloud Console. Please check your key.`;
+                 }
+                 return `Error: ${error.message}. Check console for details.`;
+             }
+        }
+
+        // --- UI & State Management ---
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-notification');
+            toast.textContent = message;
+            toast.style.backgroundColor = isError ? '#ef4444' : '#10b981';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function copyToClipboard(text, sceneNumber) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`Scene ${sceneNumber} storyboard copied!`);
+            }, () => {
+                showToast('Failed to copy storyboard.', true);
+            });
+        }
+        
+        function getInputs() {
+            const inputs = {
+                idea: document.getElementById('input-idea').value.trim(),
+                ratio: document.querySelector('input[name="aspect-ratio"]:checked').value,
+                length: document.querySelector('input[name="length"]:checked').value,
+            };
+            const detailFields = ["location", "characters", "actions", "dialogue", "camera", "lighting", "style", "sound", "pacing"];
+            detailFields.forEach(field => {
+                inputs[field] = document.getElementById(`input-${field}`).value.trim();
+            });
+            return inputs;
+        }
+        
+        function switchPage(page) {
+            if (page === 'results') {
+                mainPage.classList.add('hidden');
+                resultPage.classList.remove('hidden');
+            } else {
+                resultPage.classList.add('hidden');
+                mainPage.classList.remove('hidden');
+                document.getElementById('form-container').style.display = 'block';
+                resultContainer.innerHTML = '';
+                sceneHistory = [];
+            }
+        }
+
+        toggleDetailsBtn.addEventListener('click', () => {
+            if (detailedInputs.style.maxHeight) {
+                detailedInputs.style.maxHeight = null;
+                toggleIcon.textContent = '▶';
+            } else {
+                detailedInputs.style.maxHeight = detailedInputs.scrollHeight + "px";
+                toggleIcon.textContent = '▼';
+            }
+        });
+
+        // --- Prompt Generation Logic ---
+        async function generateScene(sceneNumber = 1) {
+            if (sceneNumber === 1 && !document.getElementById('input-idea').value.trim()) {
+                showToast('Please provide a core idea to start.', true);
+                return;
+            }
+
+            switchPage('results');
+            document.getElementById('form-container').style.display = 'none';
+            loadingIndicator.classList.remove('hidden');
+            loadingText.textContent = `🎬 Generating Scene ${sceneNumber}...`;
+
+            let systemPrompt;
+            if (sceneNumber === 1) {
+                const i = getInputs();
+                systemPrompt = `You are an expert film director creating a storyboard. Your task is to generate a detailed plan for Scene 1 based on the user's brief.
+                
+                **Primary Goal:** Flesh out the user's Core Idea into a full scene.
+                **Core Idea:** ${i.idea}
+                
+                **Technical Specs:**
+                - Aspect Ratio: ${i.ratio}
+                - Target Length: ${i.length}
+                
+                **Director's Overrides (Use these if provided, otherwise make a creative choice):**
+                - Location: ${i.location || 'AI to decide'}
+                - Characters: ${i.characters || 'AI to decide'}
+                - Actions: ${i.actions || 'AI to decide'}
+                - Dialogue: ${i.dialogue || 'AI to decide'}
+                - Camera: ${i.camera || 'AI to decide'}
+                - Lighting: ${i.lighting || 'AI to decide'}
+                - Style: ${i.style || 'AI to decide'}
+                - Sound/Music: ${i.sound || 'AI to decide'}
+                - Pacing/Mood: ${i.pacing || 'AI to decide'}
+                
+                **Output Format:**
+                You MUST respond using the following 9-category markdown format. Do not add any other text before or after this structure.
+                ### 1. Location / Background
+                [Description]
+                ### 2. Characters & Appearance
+                [Description]
+                ### 3. Key Actions & Events
+                [Description]
+                ### 4. Dialogue
+                [Text or "Silent"]
+                ### 5. Camera Shots & Angles
+                [Description]
+                ### 6. Lighting Style
+                [Description]
+                ### 7. Visual Style / Aesthetics
+                [Description]
+                ### 8. Sound Design & Music
+                [Description]
+                ### 9. Pacing & Mood
+                [Description]
+                `;
+            } else {
+                const previousScene = sceneHistory[sceneHistory.length - 1];
+                const maintainConsistency = document.getElementById('consistency-checkbox')?.checked;
+                
+                systemPrompt = `You are an expert film director creating Scene ${sceneNumber} of a storyboard. It must logically follow the previous scene.
+                
+                **Previous Scene (for context):**
+                ---
+                ${previousScene.prompt}
+                ---
+                
+                **Instructions for Scene ${sceneNumber}:**
+                1. Create a new scene that shows a clear continuation of the action, story, or theme.
+                2. Maintain the established visual style, mood, location context, and aspect ratio.
+                ${maintainConsistency ? `3. **CRITICAL:** Ensure character consistency. Reuse the exact character descriptions from the previous scene to maintain their appearance perfectly.` : ''}
+                
+                **Output Format:**
+                You MUST respond using the exact 9-category markdown format as the previous scene.
+                `;
+            }
+
+            const generatedPrompt = await callGemini(systemPrompt);
+            const sceneData = {
+                id: Date.now(),
+                sceneNumber: sceneNumber,
+                prompt: generatedPrompt,
+            };
+            sceneHistory.push(sceneData);
+            displayScene(sceneData);
+            loadingIndicator.classList.add('hidden');
+        }
+
+        function formatStructuredPrompt(rawText) {
+            if (!rawText || !rawText.includes('###')) return `<p>${rawText}</p>`;
+            return rawText
+                .split('### ')
+                .filter(part => part.trim() !== '')
+                .map(part => {
+                    const lines = part.trim().split('\n');
+                    const title = lines.shift().trim();
+                    const content = lines.join('\n').trim();
+                    return `
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">${title}</h3>
+                            <p class="text-gray-400 whitespace-pre-wrap">${content}</p>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        function displayScene(sceneData) {
+            const existingActions = resultContainer.querySelector('.scene-actions');
+            if(existingActions) existingActions.remove();
+
+            const sceneCard = document.createElement('div');
+            sceneCard.className = 'card space-y-5';
+            sceneCard.innerHTML = `
+                <div class="flex justify-between items-start gap-4">
+                    <h2 class="text-2xl font-bold text-blue-400">Scene ${sceneData.sceneNumber}</h2>
+                    <div class="flex items-center gap-4 flex-shrink-0">
+                        <label for="consistency-checkbox" class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer hover:text-white">
+                            <input type="checkbox" id="consistency-checkbox" class="w-4 h-4 rounded bg-gray-600 border-gray-500 text-blue-500 focus:ring-blue-600">
+                            Keep Character Consistent
+                        </label>
+                        <button onclick="copyToClipboard(\`${sceneData.prompt.replace(/`/g, '\\`')}\`, ${sceneData.sceneNumber})" class="btn btn-secondary !w-auto text-sm py-2 px-3">Copy</button>
+                    </div>
+                </div>
+                <div class="space-y-6">${formatStructuredPrompt(sceneData.prompt)}</div>
+                <div class="scene-actions grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                    <button id="next-scene-btn" class="btn">Generate Scene ${sceneData.sceneNumber + 1}</button>
+                    <button id="save-prompt-btn" class="btn btn-secondary">Save Storyboard (${sceneHistory.length})</button>
+                    <button id="start-over-btn" class="btn bg-gray-600 hover:bg-gray-500">New Project</button>
+                </div>
+            `;
+            resultContainer.appendChild(sceneCard);
+            
+            document.getElementById('next-scene-btn').onclick = () => generateScene(sceneData.sceneNumber + 1);
+            document.getElementById('save-prompt-btn').onclick = () => saveAllPrompts();
+            document.getElementById('start-over-btn').onclick = () => {
+                switchPage('main');
+                document.getElementById('input-idea').focus();
+            };
+        }
+
+        // --- Local Storage Logic ---
+        function getSavedPrompts() {
+            return JSON.parse(localStorage.getItem('savedVideoStoryboards') || '[]');
+        }
+
+        function saveAllPrompts() {
+            let saved = getSavedPrompts();
+            sceneHistory.forEach(scene => {
+                if (!saved.some(p => p.id === scene.id)) { saved.push(scene); }
+            });
+            if (saved.length > 10) { saved = saved.slice(saved.length - 10); }
+            localStorage.setItem('savedVideoStoryboards', JSON.stringify(saved));
+            showToast(`${sceneHistory.length} scene(s) saved! (${saved.length} total)`);
+            loadSavedPrompts();
+        }
+
+        function loadSavedPrompts() {
+            const prompts = getSavedPrompts();
+            savedPromptsContainer.innerHTML = '';
+            if (prompts.length === 0) return;
+
+            savedPromptsContainer.innerHTML = `<h2 class="text-xl font-bold mb-4 text-white mt-12">💾 Saved Storyboards</h2>`;
+            const list = document.createElement('div');
+            list.className = 'space-y-3';
+            
+            prompts.slice().reverse().forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'bg-gray-800 p-3 rounded-lg flex items-center justify-between gap-4';
+                const summary = p.prompt.split('\n')[1] || 'No details'; // Get first line of content
+                item.innerHTML = `
+                    <p class="text-gray-400 text-sm truncate"><strong>Scene ${p.sceneNumber}:</strong> ${summary}</p>
+                    <button onclick="copyToClipboard(\`${p.prompt.replace(/`/g, '\\`')}\`, ${p.sceneNumber})" class="btn !w-auto text-xs py-1 px-2">Copy</button>
+                `;
+                list.appendChild(item);
+            });
+            savedPromptsContainer.appendChild(list);
+            
+            const clearButton = document.createElement('button');
+            clearButton.className = 'btn btn-danger mt-4 !w-auto text-sm py-2 px-4';
+            clearButton.textContent = 'Clear All Saved';
+            clearButton.onclick = () => {
+                if (confirm('Are you sure you want to delete all saved storyboards?')) {
+                    localStorage.removeItem('savedVideoStoryboards');
+                    loadSavedPrompts();
+                    showToast('All saved storyboards cleared.');
+                }
+            };
+            savedPromptsContainer.appendChild(clearButton);
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            generateBtn.addEventListener('click', () => generateScene(1));
+            loadSavedPrompts();
+            document.getElementById('input-idea').focus();
+        });
+    </script>
+</body>
+</html>
