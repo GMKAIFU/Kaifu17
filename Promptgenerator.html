@@ -527,7 +527,15 @@
             }
             document.body.removeChild(textArea);
         });
-
+async function generate() {
+  const resp = await fetch('/api/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ userInput: document.getElementById('prompt').value })
+  });
+  const data = await resp.json();
+  document.getElementById('output').innerText = data.output;
+        }
         // --- Initial Setup ---
         setActiveTab('image'); // Start on the image tab by default
 
